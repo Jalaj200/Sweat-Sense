@@ -93,11 +93,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smart_sense.wsgi.application'
 
-# Database Configuration
+# Database Configuration (Active Backend: MySQL)
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-# - Production environments (Vercel serverless or DEBUG=False) MUST provide DATABASE_URL pointing to PostgreSQL.
-# - Local development defaults to SQLite (db.sqlite3) when DATABASE_URL is not set and DEBUG=True.
+# Reads MySQL connection parameters from:
+# 1. DATABASE_URL (e.g. mysql://username:password@hostname:3306/dbname?charset=utf8mb4)
+# 2. Individual MySQL environment variables (MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT)
 DATABASE_URL = os.environ.get('DATABASE_URL')
+MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', os.environ.get('DB_NAME'))
 
 if DATABASE_URL:
     try:
@@ -108,29 +110,64 @@ if DATABASE_URL:
             "Please ensure dj-database-url is installed via requirements.txt."
         ) from exc
 
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-elif os.environ.get('VERCEL') == '1' or not DEBUG:
-    # Explicitly fail during startup rather than attempting to write to read-only SQLite on Vercel
-    raise ImproperlyConfigured(
-        "DATABASE_URL environment variable is required in production and on Vercel (when DEBUG=False). "
-        "Vercel serverless functions have a read-only, ephemeral filesystem and cannot use local SQLite. "
-        "Please provision a persistent PostgreSQL database (e.g. Neon, Supabase) and set DATABASE_URL "
-        "in the Vercel Project Settings."
+    db_config = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
     )
-else:
-    # Safe default for local development with DEBUG=True
+    # Ensure MySQL charset and sql_mode options
+    if 'mysql' in db_config.get('ENGINE', ''):
+        db_config.setdefault('OPTIONS', {})
+        db_config['OPTIONS'].setdefault('charset', 'utf8mb4')
+        db_config['OPTIONS'].setdefault('init_command', "SET sql_mode='STRICT_TRANS_TABLES'")
+
+    DATABASES = {'default': db_config}
+
+elif MYSQL_DATABASE:
+    mysql_user = os.environ.get('MYSQL_USER', os.environ.get('DB_USER', 'root'))
+    mysql_password = os.environ.get('MYSQL_PASSWORD', os.environ.get('DB_PASSWORD', ''))
+    mysql_host = os.environ.get('MYSQL_HOST', os.environ.get('DB_HOST', '127.0.0.1'))
+    mysql_port = os.environ.get('MYSQL_PORT', os.environ.get('DB_PORT', '3306'))
+
+    mysql_options = {
+        'charset': 'utf8mb4',
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES', default_storage_engine=INNODB",
+    }
+
+    # SSL configuration for cloud MySQL providers (Aiven, TiDB, PlanetScale, AWS RDS)
+    mysql_ssl_ca = os.environ.get('MYSQL_SSL_CA')
+    if mysql_ssl_ca:
+        mysql_options['ssl'] = {'ca': mysql_ssl_ca}
+    elif os.environ.get('MYSQL_SSL', 'false').lower() in ('true', '1', 'required'):
+        mysql_options['ssl'] = {'ssl_mode': 'REQUIRED'}
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': MYSQL_DATABASE,
+            'USER': mysql_user,
+            'PASSWORD': mysql_password,
+            'HOST': mysql_host,
+            'PORT': mysql_port,
+            'OPTIONS': mysql_options,
+            'CONN_MAX_AGE': 600,
+        }
+    }
+elif os.environ.get('USE_SQLITE_BACKUP') == '1':
+    # Emergency local recovery/inspection against original SQLite backup
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+else:
+    # Fail fast: MySQL configuration is strictly required
+    raise ImproperlyConfigured(
+        "MySQL configuration is required. Please set DATABASE_URL (e.g. mysql://user:password@host:3306/dbname) "
+        "or set MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST in your environment variables. "
+        "SQLite is not permitted in the active application configuration."
+    )
 
 # Authentication Backends
 # Allows login via either Username or Email address

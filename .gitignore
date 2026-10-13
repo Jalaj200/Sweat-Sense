@@ -20,6 +20,7 @@ venv.bak/
 db.sqlite3
 db.sqlite3-journal
 *.sqlite3
+*.backup
 
 # Media files (contains private patient documents and uploaded medical reports)
 media/
