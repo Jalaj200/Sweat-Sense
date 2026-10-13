@@ -1,6 +1,5 @@
 Django>=5.1,<6.1
 dj-database-url>=2.2.0
-mysqlclient>=2.2.0
 PyMySQL>=1.1.0
 cryptography>=43.0.0
 python-dotenv>=1.0.0
