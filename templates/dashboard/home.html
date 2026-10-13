@@ -1,0 +1,279 @@
+{% extends 'portal_base.html' %}
+{% load static %}
+
+{% block title %}Patient Portal Home — Sweat Sense{% endblock %}
+{% block section_title %}Patient Home Dashboard{% endblock %}
+
+{% block portal_content %}
+<div class="row g-4">
+  <!-- 1. Hero Welcome Card -->
+  <div class="col-12">
+    <div class="portal-card position-relative overflow-hidden" style="background: linear-gradient(135deg, #FFFFFF 0%, #F0FDFB 100%); border-left: 5px solid var(--portal-blue);">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-light text-primary small fw-semibold mb-3 border">
+            <span class="pulse-dot"></span>
+            Sweat Sense Clinical Healthcare Portal
+          </div>
+          <h2 class="display-6 fw-bold mb-2 text-navy" style="color: var(--portal-navy);">Welcome back, {{ display_name }}!</h2>
+          <p class="lead mb-3" style="color: #486581; font-size: 1.05rem;">
+            Manage your verified medical consultations, laboratory blood collections, pathology reports, and health history in one secure, unified portal.
+          </p>
+          <div class="d-flex align-items-center gap-3 flex-wrap">
+            <span class="small text-muted"><i class="bi bi-shield-check text-success me-1"></i> End-to-End Encrypted Records</span>
+            <span class="small text-muted"><i class="bi bi-building text-primary me-1"></i> Certified Pathology Partners</span>
+            <span class="small text-muted"><i class="bi bi-clock-history text-teal me-1"></i> Real-time Requisition Tracking</span>
+          </div>
+        </div>
+
+        <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+          <div class="p-3 bg-white rounded-3 border d-inline-block text-start shadow-xs w-100" style="max-width: 320px;">
+            <div class="small text-muted mb-1">Active Patient Session</div>
+            <div class="fw-bold text-navy mb-2">{{ user.username }}</div>
+            <div class="d-flex justify-content-between small py-1 border-top">
+              <span class="text-muted">Consultations:</span>
+              <span class="fw-semibold text-navy">{{ consultation_count }} scheduled</span>
+            </div>
+            <div class="d-flex justify-content-between small py-1">
+              <span class="text-muted">Blood Bookings:</span>
+              <span class="fw-semibold text-navy">{{ blood_booking_count }} active</span>
+            </div>
+            <div class="d-flex justify-content-between small py-1">
+              <span class="text-muted">Available Reports:</span>
+              <span class="fw-semibold text-teal">{{ report_count }} issued</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Educational CRP Card (Accurate & Responsible) -->
+  <div class="col-12">
+    <div class="crp-educational-card shadow-xs">
+      <div class="d-flex align-items-start gap-3">
+        <div class="rounded-3 p-2 bg-white text-teal fs-4 shadow-xs" style="color: var(--portal-teal);">
+          <i class="bi bi-info-circle-fill"></i>
+        </div>
+        <div>
+          <h3 class="h6 fw-bold mb-1" style="color: var(--portal-navy);">About C-Reactive Protein (CRP) &amp; Sweat Biosensing</h3>
+          <p class="small text-muted mb-0">
+            C-reactive protein (CRP) is a biomarker associated with inflammation. Sweat Sense explores sweat-based CRP detection as a research direction. Clinical diagnostic decisions must always rely on validated blood tests and guidance from licensed healthcare practitioners.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Quick-Action Cards Grid -->
+  <div class="col-12">
+    <div class="row g-3">
+      <!-- Action 1: Doctor Consultation -->
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'consultations:list' %}" class="quick-action-card h-100">
+          <div class="quick-action-icon bg-primary-subtle text-primary">
+            <i class="bi bi-person-badge"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-navy">Doctor Consultation</div>
+            <div class="small text-muted">Schedule appointments</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Action 2: Blood Collection -->
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'blood_collection:list' %}" class="quick-action-card h-100">
+          <div class="quick-action-icon bg-danger-subtle text-danger">
+            <i class="bi bi-droplet-half"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-navy">Blood Collection</div>
+            <div class="small text-muted">Book sample collection</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Action 3: Reports -->
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'reports:list' %}" class="quick-action-card h-100">
+          <div class="quick-action-icon bg-info-subtle text-info">
+            <i class="bi bi-file-earmark-medical"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-navy">Reports</div>
+            <div class="small text-muted">Access lab documents</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Action 4: History -->
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'history' %}" class="quick-action-card h-100">
+          <div class="quick-action-icon bg-secondary-subtle text-secondary">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <div>
+            <div class="fw-bold text-navy">History</div>
+            <div class="small text-muted">Activity &amp; records log</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Two-Column Dashboard Content -->
+  <!-- Left Column: Upcoming Consultations & Blood Bookings -->
+  <div class="col-lg-7">
+    <!-- Upcoming Doctor Consultations Panel -->
+    <div class="portal-card mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h6 fw-bold mb-0 text-navy d-flex align-items-center gap-2">
+          <i class="bi bi-calendar-event text-primary"></i>
+          Upcoming Doctor Consultations
+        </h3>
+        <a href="{% url 'consultations:list' %}" class="small text-primary fw-semibold">View All</a>
+      </div>
+
+      {% if upcoming_consultations %}
+        <div class="list-group list-group-flush">
+          {% for item in upcoming_consultations %}
+            <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-light p-2 text-primary">
+                  <i class="bi bi-person-check fs-5"></i>
+                </div>
+                <div>
+                  <div class="fw-bold text-navy">Dr. {{ item.doctor.name }}</div>
+                  <div class="small text-muted">{{ item.doctor.specialty }} • {{ item.get_consultation_type_display }}</div>
+                  <div class="small text-primary fw-medium">
+                    <i class="bi bi-clock me-1"></i> {{ item.appointment_date|date:"M d, Y" }} at {{ item.time_slot }}
+                  </div>
+                </div>
+              </div>
+              <span class="badge {% if item.status == 'confirmed' %}bg-success-subtle text-success{% else %}bg-warning-subtle text-warning{% endif %} px-2 py-1">
+                {{ item.get_status_display }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- Helpful Empty State -->
+        <div class="portal-empty-state py-4 my-2">
+          <div class="portal-empty-icon" style="width: 50px; height: 50px; font-size: 1.25rem;">
+            <i class="bi bi-calendar-x"></i>
+          </div>
+          <p class="text-muted small mb-3">No upcoming consultations scheduled.</p>
+          <a href="{% url 'consultations:list' %}" class="btn btn-outline-ss btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Book Consultation
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Upcoming Blood Collection Bookings Panel -->
+    <div class="portal-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h6 fw-bold mb-0 text-navy d-flex align-items-center gap-2">
+          <i class="bi bi-droplet text-danger"></i>
+          Upcoming Blood Collection Bookings
+        </h3>
+        <a href="{% url 'blood_collection:list' %}" class="small text-primary fw-semibold">Manage Bookings</a>
+      </div>
+
+      {% if upcoming_blood_bookings %}
+        <div class="list-group list-group-flush">
+          {% for booking in upcoming_blood_bookings %}
+            <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-danger-subtle p-2 text-danger">
+                  <i class="bi bi-droplet-half fs-5"></i>
+                </div>
+                <div>
+                  <div class="fw-bold text-navy">Requisition for {{ booking.patient_name }}</div>
+                  <div class="small text-muted">Location: {{ booking.get_collection_location_display }}</div>
+                  <div class="small text-danger fw-medium">
+                    <i class="bi bi-calendar-check me-1"></i> {{ booking.collection_date|date:"M d, Y" }} ({{ booking.time_slot }})
+                  </div>
+                </div>
+              </div>
+              <span class="badge {% if booking.status == 'confirmed' %}bg-success-subtle text-success{% else %}bg-warning-subtle text-warning{% endif %} px-2 py-1">
+                {{ booking.get_status_display }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- Helpful Empty State -->
+        <div class="portal-empty-state py-4 my-2">
+          <div class="portal-empty-icon" style="width: 50px; height: 50px; font-size: 1.25rem;">
+            <i class="bi bi-droplet-slash"></i>
+          </div>
+          <p class="text-muted small mb-3">No blood collection bookings yet.</p>
+          <a href="{% url 'blood_collection:list' %}" class="btn btn-outline-ss btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Book Blood Collection
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Right Column: Recent Reports & Requisition Guidance -->
+  <div class="col-lg-5">
+    <!-- Recent Laboratory Reports -->
+    <div class="portal-card mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h6 fw-bold mb-0 text-navy d-flex align-items-center gap-2">
+          <i class="bi bi-file-earmark-medical text-teal"></i>
+          Recent Medical Reports
+        </h3>
+        <a href="{% url 'reports:list' %}" class="small text-primary fw-semibold">All Reports</a>
+      </div>
+
+      {% if recent_reports %}
+        <div class="list-group list-group-flush">
+          {% for report in recent_reports %}
+            <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-bold text-navy small">{{ report.title }}</div>
+                <div class="text-muted" style="font-size: 0.75rem;">{{ report.get_category_display }} • {{ report.report_date|date:"M d, Y" }}</div>
+              </div>
+              <a href="{% url 'reports:view' report.id %}" class="btn btn-outline-ss btn-sm py-1 px-2" style="font-size: 0.8rem;">
+                View
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <!-- Helpful Empty State -->
+        <div class="portal-empty-state py-4 my-2">
+          <div class="portal-empty-icon" style="width: 50px; height: 50px; font-size: 1.25rem;">
+            <i class="bi bi-folder-x"></i>
+          </div>
+          <p class="text-muted small mb-2">Your reports will appear here when available.</p>
+          <p class="text-muted" style="font-size: 0.75rem;">Verified diagnostic reports uploaded by authorized laboratories will be accessible directly in this section.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Patient Clinical Preparation Instructions -->
+    <div class="portal-card bg-light border">
+      <h3 class="h6 fw-bold mb-2 text-navy"><i class="bi bi-journal-check text-primary me-2"></i>Patient Guidance</h3>
+      <ul class="list-unstyled small text-muted mb-0">
+        <li class="mb-2 d-flex align-items-start gap-2">
+          <i class="bi bi-check2 text-teal mt-1"></i>
+          <span><strong>Fasting for Blood Work:</strong> When required, maintain an 8-10 hour fast (water is permitted).</span>
+        </li>
+        <li class="mb-2 d-flex align-items-start gap-2">
+          <i class="bi bi-check2 text-teal mt-1"></i>
+          <span><strong>Doctor Appointments:</strong> Please connect 5 minutes early for virtual visits, or arrive 10 minutes prior for clinic visits.</span>
+        </li>
+        <li class="d-flex align-items-start gap-2">
+          <i class="bi bi-check2 text-teal mt-1"></i>
+          <span><strong>Cancellation Notice:</strong> Appointments can be cancelled with at least 2 hours prior notice.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

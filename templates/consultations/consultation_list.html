@@ -1,0 +1,282 @@
+{% extends 'portal_base.html' %}
+{% load static %}
+
+{% block title %}Doctor Consultation — Sweat Sense{% endblock %}
+{% block section_title %}Doctor Consultation{% endblock %}
+
+{% block portal_content %}
+<div class="row g-4">
+  <!-- 1. Header Banner -->
+  <div class="col-12">
+    <div class="portal-card position-relative" style="background: linear-gradient(135deg, #FFFFFF 0%, #F0FDFB 100%); border-left: 5px solid var(--portal-blue);">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <span class="badge bg-primary-subtle text-primary fw-semibold mb-2 px-3 py-1">Clinical Specialist Directory</span>
+          <h2 class="h4 fw-bold text-navy mb-1" style="color: var(--portal-navy);">Doctor Consultation Services</h2>
+          <p class="text-muted small mb-0" style="max-width: 650px;">
+            Consult with certified practitioners in internal medicine, clinical pathology, and chronic inflammatory care. Select your specialist and schedule an in-person or online appointment.
+          </p>
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary-ss btn-sm" data-bs-toggle="modal" data-bs-target="#bookingModal">
+            <i class="bi bi-calendar-plus me-1"></i> Book New Consultation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Doctor Directory Cards Grid -->
+  <div class="col-12">
+    <h3 class="h6 fw-bold text-navy mb-3 d-flex align-items-center gap-2">
+      <i class="bi bi-people-fill text-primary"></i>
+      Available Medical Specialists
+    </h3>
+
+    {% if doctors %}
+      <div class="row g-3">
+        {% for doctor in doctors %}
+          <div class="col-md-6 col-lg-4">
+            <div class="doctor-card h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex align-items-start gap-3 mb-3">
+                  <div class="doctor-avatar-box">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div>
+                    <h4 class="h6 fw-bold text-navy mb-1">Dr. {{ doctor.name }}</h4>
+                    <span class="badge bg-light text-navy border mb-1" style="font-size: 0.75rem;">{{ doctor.qualifications }}</span>
+                    <div class="small text-teal fw-semibold" style="color: var(--portal-teal);">{{ doctor.specialty }}</div>
+                  </div>
+                </div>
+
+                <ul class="list-unstyled small text-muted mb-3 border-top pt-2">
+                  <li class="mb-1"><i class="bi bi-clock text-primary me-2"></i><strong>Available:</strong> {{ doctor.available_days }}</li>
+                  <li class="mb-1"><i class="bi bi-laptop text-primary me-2"></i><strong>Mode:</strong> {{ doctor.get_consultation_mode_display }}</li>
+                  <li class="mb-1"><i class="bi bi-award text-primary me-2"></i><strong>Experience:</strong> {{ doctor.experience_years }}+ Years</li>
+                  <li><i class="bi bi-hospital text-primary me-2"></i>{{ doctor.hospital_affiliation }}</li>
+                </ul>
+              </div>
+
+              <div class="pt-2 border-top">
+                <button type="button" class="btn btn-outline-ss btn-sm w-100 select-doctor-btn" data-bs-toggle="modal" data-bs-target="#bookingModal" data-doctor-id="{{ doctor.id }}">
+                  <i class="bi bi-calendar-check me-1"></i> Schedule with Dr. {{ doctor.name }}
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="portal-empty-state py-4">
+        <div class="portal-empty-icon"><i class="bi bi-person-x"></i></div>
+        <p class="text-muted small mb-0">No doctors are currently available in the directory. Doctors can be configured via the administrative console.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- 3. Upcoming Patient Consultations -->
+  <div class="col-lg-7">
+    <div class="portal-card h-100">
+      <h3 class="h6 fw-bold text-navy mb-3 d-flex align-items-center gap-2">
+        <i class="bi bi-calendar2-check text-primary"></i>
+        Your Upcoming Consultations
+      </h3>
+
+      {% if upcoming_consultations %}
+        <div class="list-group list-group-flush">
+          {% for item in upcoming_consultations %}
+            <div class="list-group-item px-0 py-3 border-bottom">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h4 class="h6 fw-bold text-navy mb-1">Dr. {{ item.doctor.name }}</h4>
+                  <div class="small text-muted">{{ item.doctor.specialty }} • {{ item.get_consultation_type_display }}</div>
+                </div>
+                <span class="badge {% if item.status == 'confirmed' %}bg-success-subtle text-success{% else %}bg-warning-subtle text-warning{% endif %}">
+                  {{ item.get_status_display }}
+                </span>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 small">
+                <div class="text-primary fw-medium">
+                  <i class="bi bi-calendar me-1"></i> {{ item.appointment_date|date:"l, M d, Y" }}
+                  <span class="text-muted mx-1">•</span>
+                  <i class="bi bi-clock me-1"></i> {{ item.time_slot }}
+                </div>
+
+                {% if item.can_cancel %}
+                  <form method="post" action="{% url 'consultations:cancel' item.id %}" onsubmit="return confirm('Are you sure you want to cancel this appointment?');" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: 0.75rem;">
+                      Cancel Appointment
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+
+              {% if item.reason_for_consultation %}
+                <div class="mt-2 p-2 bg-light rounded text-muted small fst-italic">
+                  "{{ item.reason_for_consultation }}"
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="portal-empty-state py-4 my-2">
+          <div class="portal-empty-icon"><i class="bi bi-calendar-minus"></i></div>
+          <p class="text-muted small mb-3">No upcoming consultations.</p>
+          <button type="button" class="btn btn-outline-ss btn-sm" data-bs-toggle="modal" data-bs-target="#bookingModal">
+            <i class="bi bi-plus-lg me-1"></i> Book a Consultation
+          </button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 4. Past Consultation History -->
+  <div class="col-lg-5">
+    <div class="portal-card h-100">
+      <h3 class="h6 fw-bold text-navy mb-3 d-flex align-items-center gap-2">
+        <i class="bi bi-clock-history text-muted"></i>
+        Past Consultations
+      </h3>
+
+      {% if past_consultations %}
+        <div class="list-group list-group-flush">
+          {% for item in past_consultations %}
+            <div class="list-group-item px-0 py-2 border-bottom">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-bold text-navy small">Dr. {{ item.doctor.name }}</div>
+                  <div class="text-muted" style="font-size: 0.75rem;">{{ item.appointment_date|date:"M d, Y" }} • {{ item.get_consultation_type_display }}</div>
+                </div>
+                <span class="badge {% if item.status == 'completed' %}bg-success-subtle text-success{% elif item.status == 'cancelled' %}bg-secondary-subtle text-muted{% else %}bg-light text-navy{% endif %}" style="font-size: 0.7rem;">
+                  {{ item.get_status_display }}
+                </span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="portal-empty-state py-4 my-2">
+          <div class="portal-empty-icon" style="width: 45px; height: 45px; font-size: 1rem;"><i class="bi bi-journal-x"></i></div>
+          <p class="text-muted small mb-0">No past consultations recorded.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Consultation Booking Modal -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: var(--ss-radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-navy" id="bookingModalLabel">
+          <i class="bi bi-calendar-plus text-primary me-2"></i>Schedule Doctor Consultation
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form method="post" action="{% url 'consultations:list' %}" novalidate id="consultationForm">
+        {% csrf_token %}
+        <div class="modal-body p-4">
+          <!-- Form Validation Errors -->
+          {% if form.non_field_errors %}
+            <div class="ss-alert ss-alert-danger mb-3">
+              <span class="ss-alert-icon"><i class="bi bi-exclamation-octagon-fill"></i></span>
+              <div class="ss-alert-content">
+                {% for err in form.non_field_errors %}
+                  <div>{{ err }}</div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="row g-3">
+            <!-- Doctor Selection -->
+            <div class="col-md-6">
+              <label for="{{ form.doctor.id_for_label }}" class="form-label fw-semibold small text-navy">
+                Select Medical Specialist <span class="text-danger">*</span>
+              </label>
+              {{ form.doctor }}
+              {% if form.doctor.errors %}
+                <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.doctor.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Consultation Type -->
+            <div class="col-md-6">
+              <label for="{{ form.consultation_type.id_for_label }}" class="form-label fw-semibold small text-navy">
+                Consultation Mode <span class="text-danger">*</span>
+              </label>
+              {{ form.consultation_type }}
+              {% if form.consultation_type.errors %}
+                <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.consultation_type.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Appointment Date -->
+            <div class="col-md-6">
+              <label for="{{ form.appointment_date.id_for_label }}" class="form-label fw-semibold small text-navy">
+                Appointment Date <span class="text-danger">*</span>
+              </label>
+              {{ form.appointment_date }}
+              <div class="form-text" style="font-size: 0.75rem;">Select today or an upcoming weekday.</div>
+              {% if form.appointment_date.errors %}
+                <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.appointment_date.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Time Slot Selection -->
+            <div class="col-md-6">
+              <label for="{{ form.time_slot.id_for_label }}" class="form-label fw-semibold small text-navy">
+                Available Time Slot <span class="text-danger">*</span>
+              </label>
+              {{ form.time_slot }}
+              {% if form.time_slot.errors %}
+                <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.time_slot.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Reason for Consultation -->
+            <div class="col-12">
+              <label for="{{ form.reason_for_consultation.id_for_label }}" class="form-label fw-semibold small text-navy">
+                Clinical Reason or Background (Optional)
+              </label>
+              {{ form.reason_for_consultation }}
+              {% if form.reason_for_consultation.errors %}
+                <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.reason_for_consultation.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light border-top p-3">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary-ss btn-sm">
+            <i class="bi bi-check-circle me-1"></i> Confirm Booking
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // When clicking 'Schedule with Dr. X', automatically set dropdown value
+    const buttons = document.querySelectorAll('.select-doctor-btn');
+    const doctorSelect = document.getElementById('id_doctor');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const docId = this.getAttribute('data-doctor-id');
+        if (doctorSelect && docId) {
+          doctorSelect.value = docId;
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

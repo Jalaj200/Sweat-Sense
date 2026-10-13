@@ -1,0 +1,380 @@
+/* ==========================================================================
+   SWEAT SENSE — PATIENT HEALTHCARE PORTAL STYLESHEET (portal.css)
+   Dedicated layout for Doctor Consultation, Blood Collection, Reports, History
+   ========================================================================== */
+
+:root {
+  --portal-sidebar-width: 270px;
+  --portal-topbar-height: 70px;
+  --portal-bg: #F4F8FB;
+  --portal-card-bg: #FFFFFF;
+  --portal-border: #DCE6EE;
+  --portal-navy: #102A43;
+  --portal-blue: #1677FF;
+  --portal-teal: #19B8A5;
+  --portal-pale-cyan: #E8F8FC;
+}
+
+body.portal-body {
+  background-color: var(--portal-bg);
+  color: var(--portal-navy);
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   Desktop Sidebar
+   -------------------------------------------------------------------------- */
+.portal-sidebar {
+  width: var(--portal-sidebar-width);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #FFFFFF;
+  border-right: 1px solid var(--portal-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 1040;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+.portal-sidebar-brand {
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid var(--portal-border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.portal-sidebar-nav {
+  padding: 1.25rem 0.85rem;
+  flex-grow: 1;
+}
+
+.portal-nav-heading {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #829ab1;
+  padding: 0 0.85rem 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.portal-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.portal-nav-item {
+  margin-bottom: 0.35rem;
+}
+
+.portal-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--ss-radius-md);
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #486581;
+  text-decoration: none;
+  transition: all var(--ss-transition-fast);
+  position: relative;
+}
+
+.portal-nav-link i {
+  font-size: 1.2rem;
+  color: #829ab1;
+  transition: color var(--ss-transition-fast);
+}
+
+.portal-nav-link:hover {
+  background-color: var(--portal-pale-cyan);
+  color: var(--portal-navy);
+}
+
+.portal-nav-link:hover i {
+  color: var(--portal-blue);
+}
+
+.portal-nav-link.active {
+  background-color: #E8F8FC;
+  color: var(--portal-blue);
+  box-shadow: 0 2px 6px rgba(22, 119, 255, 0.08);
+}
+
+.portal-nav-link.active i {
+  color: var(--portal-blue);
+}
+
+.portal-nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 4px;
+  background-color: var(--portal-blue);
+  border-radius: 0 4px 4px 0;
+}
+
+.portal-sidebar-footer {
+  padding: 1.25rem;
+  border-top: 1px solid var(--portal-border);
+  background-color: #FAFCFE;
+}
+
+/* --------------------------------------------------------------------------
+   Main Content Area & Top Bar
+   -------------------------------------------------------------------------- */
+.portal-main-wrapper {
+  margin-left: var(--portal-sidebar-width);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease;
+}
+
+.portal-topbar {
+  height: var(--portal-topbar-height);
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--portal-border);
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.portal-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.portal-section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--portal-navy);
+  margin-bottom: 0;
+}
+
+.portal-content {
+  flex-grow: 1;
+  padding: 2rem;
+}
+
+/* User Profile Dropdown Menu in Top Bar */
+.user-profile-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--ss-radius-full);
+  border: 1px solid var(--portal-border);
+  background-color: #FFFFFF;
+  cursor: pointer;
+  transition: all var(--ss-transition-fast);
+}
+
+.user-profile-menu-btn:hover {
+  background-color: var(--portal-pale-cyan);
+  border-color: #b2ebf2;
+}
+
+.user-avatar-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--ss-gradient-bio);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* --------------------------------------------------------------------------
+   Healthcare Portal Cards & Components
+   -------------------------------------------------------------------------- */
+.portal-card {
+  background-color: var(--portal-card-bg);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--ss-radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(16, 42, 67, 0.04);
+  transition: transform var(--ss-transition), box-shadow var(--ss-transition);
+}
+
+.portal-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(16, 42, 67, 0.08);
+  border-color: #b2ebf2;
+}
+
+/* Quick Action Cards */
+.quick-action-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: var(--ss-radius-lg);
+  background: #FFFFFF;
+  border: 1px solid var(--portal-border);
+  text-decoration: none;
+  color: var(--portal-navy);
+  transition: all var(--ss-transition);
+}
+
+.quick-action-card:hover {
+  background-color: #E8F8FC;
+  border-color: #80deea;
+  color: var(--portal-blue);
+  transform: translateY(-2px);
+}
+
+.quick-action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ss-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+/* Educational CRP Card */
+.crp-educational-card {
+  background: linear-gradient(135deg, #E8F8FC 0%, #FFFFFF 100%);
+  border: 1px solid #b2ebf2;
+  border-left: 5px solid var(--portal-teal);
+  border-radius: var(--ss-radius-lg);
+  padding: 1.5rem;
+}
+
+/* Empty States */
+.portal-empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background-color: #FFFFFF;
+  border: 1px dashed var(--portal-border);
+  border-radius: var(--ss-radius-lg);
+}
+
+.portal-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--portal-pale-cyan);
+  color: var(--portal-blue);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+/* Activity History Timeline */
+.history-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.history-timeline::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  left: 24px;
+  width: 2px;
+  background-color: var(--portal-border);
+}
+
+.history-timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.history-timeline-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  background-color: #FFFFFF;
+  border: 2px solid var(--portal-border);
+}
+
+.history-timeline-content {
+  flex-grow: 1;
+  background: #FFFFFF;
+  border: 1px solid var(--portal-border);
+  border-radius: var(--ss-radius-md);
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(16, 42, 67, 0.04);
+}
+
+/* Doctor Directory Cards */
+.doctor-card {
+  background: #FFFFFF;
+  border: 1px solid var(--portal-border);
+  border-radius: var(--ss-radius-lg);
+  padding: 1.5rem;
+  transition: all var(--ss-transition);
+}
+
+.doctor-card:hover {
+  border-color: var(--portal-blue);
+  box-shadow: 0 6px 18px rgba(16, 42, 67, 0.08);
+}
+
+.doctor-avatar-box {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--ss-radius-md);
+  background: var(--portal-pale-cyan);
+  color: var(--portal-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 991.98px) {
+  .portal-sidebar {
+    transform: translateX(-100%);
+  }
+  .portal-sidebar.show {
+    transform: translateX(0);
+  }
+  .portal-main-wrapper {
+    margin-left: 0;
+  }
+  .portal-topbar {
+    padding: 0 1rem;
+  }
+  .portal-content {
+    padding: 1.25rem 1rem;
+  }
+}

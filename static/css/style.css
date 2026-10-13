@@ -1,0 +1,482 @@
+/* ==========================================================================
+   SWEAT SENSE — BIOMEDICAL BIOSENSING DESIGN SYSTEM & STYLESHEET
+   Brand: Sweat Sense | "Sensing Sweat. Exploring Health."
+   Biomedical Research: C-Reactive Protein (CRP) Sweat Biosensing
+   ========================================================================== */
+
+:root {
+  /* Biomedical Scientific Color Palette */
+  --ss-navy: #102A43;             /* Deep Navy - Headings & Contrast */
+  --ss-blue: #1677FF;             /* Scientific Blue - Primary Actions */
+  --ss-blue-hover: #0958d9;
+  --ss-teal: #19B8A5;             /* Biosensor Teal - Biomarker & Signal Accents */
+  --ss-teal-hover: #139484;
+  --ss-pale-cyan: #E8F8FC;        /* Pale Cyan - Soft Card & Hero Backgrounds */
+  --ss-pale-cyan-border: #c3eef7;
+  --ss-white: #FFFFFF;
+  --ss-gray-bg: #F4F7FA;          /* Soft Gray Background */
+  --ss-gray-surface: #ffffff;
+  --ss-gray-border: #E2E8F0;
+
+  /* Typography Colors */
+  --ss-text-main: #102A43;        /* Deep Navy */
+  --ss-text-muted: #486581;       /* Cool Slate */
+  --ss-text-light: #829ab1;
+  --ss-text-inverse: #ffffff;
+
+  /* Scientific Accents & Gradients */
+  --ss-gradient-primary: linear-gradient(135deg, #102A43 0%, #1677FF 60%, #19B8A5 100%);
+  --ss-gradient-bio: linear-gradient(135deg, #1677FF 0%, #19B8A5 100%);
+  --ss-gradient-soft: linear-gradient(135deg, rgba(22, 119, 255, 0.06) 0%, rgba(25, 184, 165, 0.08) 100%);
+
+  /* Semantic Feedback */
+  --ss-success: #19B8A5;
+  --ss-success-light: #E6FBF8;
+  --ss-warning: #F59E0B;
+  --ss-warning-light: #FFFBEB;
+  --ss-danger: #EF4444;
+  --ss-danger-light: #FEF2F2;
+  --ss-info: #1677FF;
+  --ss-info-light: #E8F8FC;
+
+  /* Shadows */
+  --ss-shadow-xs: 0 1px 2px 0 rgba(16, 42, 67, 0.04);
+  --ss-shadow-sm: 0 2px 4px 0 rgba(16, 42, 67, 0.06);
+  --ss-shadow-md: 0 6px 16px -2px rgba(16, 42, 67, 0.08);
+  --ss-shadow-lg: 0 12px 28px -4px rgba(16, 42, 67, 0.10);
+  --ss-shadow-xl: 0 20px 35px -6px rgba(16, 42, 67, 0.12);
+
+  /* Border Radii */
+  --ss-radius-sm: 6px;
+  --ss-radius-md: 10px;
+  --ss-radius-lg: 16px;
+  --ss-radius-xl: 22px;
+  --ss-radius-full: 9999px;
+
+  /* Transitions */
+  --ss-transition-fast: 0.15s ease;
+  --ss-transition: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Document */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ss-text-main);
+  background-color: var(--ss-gray-bg);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-font {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+  color: var(--ss-navy);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+a {
+  color: var(--ss-blue);
+  text-decoration: none;
+  transition: color var(--ss-transition-fast);
+}
+
+a:hover {
+  color: var(--ss-blue-hover);
+}
+
+/* Brand Logo Component (Sweat Droplet + Biosensor Wave) */
+.ss-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.ss-brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--ss-radius-md);
+  background: var(--ss-gradient-bio);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 14px rgba(22, 119, 255, 0.28);
+  transition: transform var(--ss-transition), box-shadow var(--ss-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.ss-brand:hover .ss-brand-mark {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(25, 184, 165, 0.35);
+}
+
+.ss-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ss-brand-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+  color: var(--ss-navy);
+  line-height: 1.1;
+}
+
+.ss-brand-tagline {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--ss-text-muted);
+  letter-spacing: 0.015em;
+}
+
+/* Buttons */
+.btn-primary-ss {
+  background: var(--ss-gradient-bio);
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: var(--ss-radius-md);
+  box-shadow: 0 4px 14px rgba(22, 119, 255, 0.22);
+  transition: all var(--ss-transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-primary-ss:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(25, 184, 165, 0.32);
+  color: #ffffff;
+}
+
+.btn-primary-ss:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary-ss:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-outline-ss {
+  background: #ffffff;
+  color: var(--ss-navy);
+  border: 1px solid var(--ss-gray-border);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: var(--ss-radius-md);
+  transition: all var(--ss-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+}
+
+.btn-outline-ss:hover {
+  background-color: var(--ss-pale-cyan);
+  border-color: var(--ss-teal);
+  color: var(--ss-navy);
+  transform: translateY(-1px);
+}
+
+.btn-teal-ss {
+  background: var(--ss-teal);
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--ss-radius-md);
+  box-shadow: 0 4px 12px rgba(25, 184, 165, 0.25);
+  transition: all var(--ss-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-teal-ss:hover {
+  background: var(--ss-teal-hover);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Alert Notifications */
+.ss-alert {
+  border-radius: var(--ss-radius-md);
+  padding: 0.875rem 1.125rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  box-shadow: var(--ss-shadow-xs);
+  animation: fadeIn 0.3s ease;
+}
+
+.ss-alert-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ss-alert-content {
+  flex-grow: 1;
+}
+
+.ss-alert-danger {
+  background-color: var(--ss-danger-light);
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.ss-alert-success {
+  background-color: var(--ss-success-light);
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.ss-alert-info {
+  background-color: var(--ss-pale-cyan);
+  border-color: var(--ss-pale-cyan-border);
+  color: #102a43;
+}
+
+.ss-alert-warning {
+  background-color: var(--ss-warning-light);
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Navbar */
+.ss-navbar {
+  background-color: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--ss-gray-border);
+  padding: 0.85rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  transition: all var(--ss-transition);
+}
+
+.nav-link-ss {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ss-text-muted);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--ss-radius-sm);
+  transition: all var(--ss-transition-fast);
+}
+
+.nav-link-ss:hover {
+  color: var(--ss-navy);
+  background-color: var(--ss-pale-cyan);
+}
+
+/* Cards */
+.ss-card {
+  background: var(--ss-white);
+  border: 1px solid var(--ss-gray-border);
+  border-radius: var(--ss-radius-lg);
+  box-shadow: var(--ss-shadow-sm);
+  transition: box-shadow var(--ss-transition), transform var(--ss-transition), border-color var(--ss-transition);
+}
+
+.ss-card-hover:hover {
+  box-shadow: var(--ss-shadow-md);
+  transform: translateY(-3px);
+  border-color: var(--ss-pale-cyan-border);
+}
+
+/* Badges & Pills */
+.ss-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--ss-radius-full);
+  letter-spacing: 0.02em;
+}
+
+.ss-badge-teal {
+  background-color: var(--ss-pale-cyan);
+  color: #0f766e;
+  border: 1px solid #b2ebf2;
+}
+
+.ss-badge-blue {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.ss-badge-navy {
+  background-color: #e2e8f0;
+  color: var(--ss-navy);
+}
+
+/* Pulse Dot Animation for Research Status */
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--ss-teal);
+  box-shadow: 0 0 10px var(--ss-teal);
+  animation: pulseAnimation 2s infinite;
+  display: inline-block;
+}
+
+@keyframes pulseAnimation {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 184, 165, 0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(25, 184, 165, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 184, 165, 0); }
+}
+
+/* Scientific Wave Pulse Graphic Animation */
+.sensor-wave {
+  animation: sensorSignal 3s ease-in-out infinite alternate;
+}
+
+@keyframes sensorSignal {
+  0% { stroke-dashoffset: 0; opacity: 0.7; }
+  100% { stroke-dashoffset: 20; opacity: 1; }
+}
+
+/* Flow Step Number Badges */
+.step-number-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ss-radius-full);
+  background: var(--ss-gradient-bio);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.15rem;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, 0.25);
+  margin-bottom: 1.25rem;
+}
+
+/* Educational Highlight Card */
+.edu-card {
+  border-left: 4px solid var(--ss-teal);
+  background: var(--ss-white);
+  padding: 1.75rem;
+  border-radius: 0 var(--ss-radius-lg) var(--ss-radius-lg) 0;
+  box-shadow: var(--ss-shadow-sm);
+}
+
+.edu-card-blue {
+  border-left-color: var(--ss-blue);
+}
+
+/* Scientific Disclaimer Callout */
+.disclaimer-box {
+  background: #f8fbfc;
+  border: 1px solid #d0eef5;
+  border-left: 4px solid var(--ss-teal);
+  border-radius: var(--ss-radius-md);
+  padding: 1.5rem;
+}
+
+/* Section Header Shared */
+.section-tag {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ss-teal);
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.section-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--ss-navy);
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: var(--ss-text-muted);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Footer Styling */
+.ss-footer {
+  background-color: var(--ss-navy);
+  color: #9fb3c8;
+  padding: 4.5rem 0 2.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ss-footer h5 {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.ss-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ss-footer-links li {
+  margin-bottom: 0.65rem;
+}
+
+.ss-footer-links a {
+  color: #9fb3c8;
+  font-size: 0.875rem;
+  transition: color var(--ss-transition-fast);
+}
+
+.ss-footer-links a:hover {
+  color: var(--ss-teal);
+}
+
+.ss-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 3.5rem;
+  padding-top: 1.75rem;
+  font-size: 0.825rem;
+  color: #627d98;
+}
+
+/* Accessible focus outline */
+:focus-visible {
+  outline: 2px solid var(--ss-blue);
+  outline-offset: 2px;
+}

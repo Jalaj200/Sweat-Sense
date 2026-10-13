@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'css/portal.css' %}">
+{% endblock %}
+
+{% block body_class %}portal-body{% endblock %}
+
+{% block content %}
+<!-- Mobile Sidebar Backdrop Overlay -->
+<div id="sidebarBackdrop" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-none" style="z-index: 1035;"></div>
+
+<!-- 1. Primary Left Sidebar (Desktop Fixed / Mobile Drawer) -->
+<aside class="portal-sidebar" id="portalSidebar" aria-label="Primary Patient Navigation">
+  <!-- Brand Logo -->
+  <div class="portal-sidebar-brand">
+    <a href="{% url 'dashboard:home' %}" class="ss-brand text-decoration-none">
+      <div class="ss-brand-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#ffffff"/>
+          <path d="M8.5 14.5c.9-1.2 2-1.7 3.5-1.7s2.6.5 3.5 1.7" stroke="#102A43" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M10 17.5c.6-.7 1.2-.9 2-.9s1.4.2 2 .9" stroke="#102A43" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="12" cy="10.5" r="1.4" fill="#102A43"/>
+        </svg>
+      </div>
+      <div class="ss-brand-text">
+        <span class="ss-brand-name">Sweat Sense</span>
+        <span class="ss-brand-tagline">Sensing Sweat. Exploring Health.</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Exactly Five Primary Navigation Sections -->
+  <div class="portal-sidebar-nav">
+    <div class="portal-nav-heading">Patient Services</div>
+    <ul class="portal-nav-list">
+      <!-- 1. Home -->
+      <li class="portal-nav-item">
+        <a href="{% url 'dashboard:home' %}" class="portal-nav-link {% if active_section == 'home' %}active{% endif %}">
+          <i class="bi bi-house-door"></i>
+          <span>Home</span>
+        </a>
+      </li>
+
+      <!-- 2. Doctor Consultation -->
+      <li class="portal-nav-item">
+        <a href="{% url 'consultations:list' %}" class="portal-nav-link {% if active_section == 'consultation' %}active{% endif %}">
+          <i class="bi bi-person-badge"></i>
+          <span>Doctor Consultation</span>
+        </a>
+      </li>
+
+      <!-- 3. Blood Collection -->
+      <li class="portal-nav-item">
+        <a href="{% url 'blood_collection:list' %}" class="portal-nav-link {% if active_section == 'blood_collection' %}active{% endif %}">
+          <i class="bi bi-droplet-half"></i>
+          <span>Blood Collection</span>
+        </a>
+      </li>
+
+      <!-- 4. Reports -->
+      <li class="portal-nav-item">
+        <a href="{% url 'reports:list' %}" class="portal-nav-link {% if active_section == 'reports' %}active{% endif %}">
+          <i class="bi bi-file-earmark-medical"></i>
+          <span>Reports</span>
+        </a>
+      </li>
+
+      <!-- 5. History -->
+      <li class="portal-nav-item">
+        <a href="{% url 'history' %}" class="portal-nav-link {% if active_section == 'history' %}active{% endif %}">
+          <i class="bi bi-clock-history"></i>
+          <span>History</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Sidebar Footer Note -->
+  <div class="portal-sidebar-footer">
+    <div class="d-flex align-items-center gap-2 small text-muted">
+      <span class="pulse-dot"></span>
+      <span style="font-size: 0.75rem;">Sweat Sense Patient Portal v2.0</span>
+    </div>
+  </div>
+</aside>
+
+<!-- 2. Main Content Wrapper -->
+<div class="portal-main-wrapper">
+  <!-- Top Bar -->
+  <header class="portal-topbar">
+    <div class="portal-topbar-left">
+      <!-- Mobile Sidebar Toggle -->
+      <button class="btn btn-sm btn-light border d-lg-none" type="button" id="mobileSidebarToggle" aria-label="Toggle navigation menu">
+        <i class="bi bi-list fs-5"></i>
+      </button>
+
+      <!-- Section Title -->
+      <h1 class="portal-section-title">{% block section_title %}Patient Portal{% endblock %}</h1>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <!-- Verified Status Badge -->
+      <div class="d-none d-md-flex align-items-center gap-2 px-3 py-1 bg-light rounded-pill border small">
+        <span class="pulse-dot"></span>
+        <span class="fw-semibold text-teal" style="color: var(--portal-teal);">Verified Patient Portal</span>
+      </div>
+
+      <!-- User Profile Menu (Dropdown) -->
+      <div class="dropdown">
+        <button class="user-profile-menu-btn" type="button" id="userProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="user-avatar-circle">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+          <span class="fw-semibold small d-none d-sm-inline text-navy">
+            {{ user.get_full_name|default:user.username }}
+          </span>
+          <i class="bi bi-chevron-down text-muted small"></i>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border p-2" aria-labelledby="userProfileDropdown" style="min-width: 240px; border-radius: var(--ss-radius-md);">
+          <li class="px-3 py-2 border-bottom mb-2">
+            <div class="fw-bold text-navy small">{{ user.get_full_name|default:user.username }}</div>
+            <div class="text-muted" style="font-size: 0.75rem;">{{ user.email|default:"No email registered" }}</div>
+          </li>
+          <li>
+            <a class="dropdown-item py-2 small d-flex align-items-center gap-2 rounded" href="#profileModal" data-bs-toggle="modal">
+              <i class="bi bi-person text-primary"></i> Patient Account Profile
+            </a>
+          </li>
+          <li><hr class="dropdown-divider my-1"></li>
+          <li>
+            <!-- Secure POST Logout -->
+            <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
+              {% csrf_token %}
+              <button type="submit" class="dropdown-item py-2 small text-danger d-flex align-items-center gap-2 rounded">
+                <i class="bi bi-box-arrow-right"></i> Sign Out
+              </button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Portal Content Body -->
+  <main class="portal-content">
+    <!-- Django Messages Alerts -->
+    {% if messages %}
+      <div class="messages-container mb-4" role="region" aria-label="Notifications">
+        {% for message in messages %}
+          <div class="ss-alert ss-alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            <span class="ss-alert-icon">
+              {% if message.tags == 'success' %}
+                <i class="bi bi-check-circle-fill"></i>
+              {% elif message.tags == 'danger' or message.tags == 'error' %}
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              {% elif message.tags == 'warning' %}
+                <i class="bi bi-exclamation-circle-fill"></i>
+              {% else %}
+                <i class="bi bi-info-circle-fill"></i>
+              {% endif %}
+            </span>
+            <div class="ss-alert-content">{{ message }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block portal_content %}{% endblock %}
+  </main>
+</div>
+
+<!-- Profile Info Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: var(--ss-radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="profileModalLabel"><i class="bi bi-shield-check text-primary me-2"></i>Patient Profile Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded-3">
+          <div class="user-avatar-circle fs-5" style="width: 48px; height: 48px;">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+          <div>
+            <div class="fw-bold text-navy">{{ user.get_full_name|default:user.username }}</div>
+            <div class="small text-muted">{{ user.email }}</div>
+          </div>
+        </div>
+
+        <ul class="list-group list-group-flush small mb-3">
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span class="text-muted">Username Identifier:</span>
+            <span class="fw-semibold text-navy">{{ user.username }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span class="text-muted">Registered On:</span>
+            <span class="text-navy">{{ user.date_joined|date:"M d, Y" }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span class="text-muted">Patient Portal Access:</span>
+            <span class="badge bg-success-subtle text-success">Active &amp; Authenticated</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span class="text-muted">Security Encryption:</span>
+            <span class="text-muted">PBKDF2 SHA-256 Hashing</span>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/portal.js' %}"></script>
+{% endblock %}

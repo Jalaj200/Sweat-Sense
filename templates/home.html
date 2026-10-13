@@ -1,0 +1,761 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sweat Sense — Sensing Sweat. Exploring Health.{% endblock %}
+
+{% block content %}
+<!-- A. Navigation Bar -->
+<header class="ss-navbar" id="mainNavbar">
+  <div class="container-xl">
+    <nav class="navbar navbar-expand-lg navbar-light p-0">
+      <!-- Brand Logo -->
+      <a href="{% url 'root' %}" class="ss-brand me-4" aria-label="Sweat Sense Home">
+        <div class="ss-brand-mark">
+          <!-- Biosensor Droplet SVG Icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#ffffff"/>
+            <path d="M8.5 14.5c.9-1.2 2-1.7 3.5-1.7s2.6.5 3.5 1.7" stroke="#102A43" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M10 17.5c.6-.7 1.2-.9 2-.9s1.4.2 2 .9" stroke="#102A43" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="10.5" r="1.4" fill="#102A43"/>
+          </svg>
+        </div>
+        <div class="ss-brand-text">
+          <span class="ss-brand-name">Sweat Sense</span>
+          <span class="ss-brand-tagline">Sensing Sweat. Exploring Health.</span>
+        </div>
+      </a>
+
+      <!-- Mobile Navbar Toggle -->
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSweatSense" aria-controls="navbarSweatSense" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Nav Links & Actions -->
+      <div class="collapse navbar-collapse" id="navbarSweatSense">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
+          <li class="nav-item">
+            <a class="nav-link nav-link-ss" href="#hero">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-ss" href="#about">About the Technology</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-ss" href="#crp-detection">CRP Detection</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-ss" href="#detection-process">How It Works</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-ss" href="#research">Research &amp; Applications</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-ss" href="#limitations">Limitations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-ss" href="#contactModal" data-bs-toggle="modal">Contact</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+          {% if user.is_authenticated %}
+            <a href="{% url 'dashboard:home' %}" class="btn btn-outline-ss btn-sm">
+              <i class="bi bi-speedometer2 text-primary"></i> Workspace Dashboard
+            </a>
+            <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-secondary" title="Sign Out">
+                <i class="bi bi-box-arrow-right"></i>
+              </button>
+            </form>
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn btn-outline-ss btn-sm">
+              <i class="bi bi-box-arrow-in-right text-primary"></i> Login
+            </a>
+            <a href="{% url 'accounts:signup' %}" class="btn btn-primary-ss btn-sm">
+              <span>Get Started</span>
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="mainContent">
+  <!-- B. Hero Section -->
+  <section class="py-5 position-relative overflow-hidden" id="hero" style="background: linear-gradient(180deg, #E8F8FC 0%, #F4F7FA 100%);">
+    <div class="container-xl py-4 py-lg-5">
+      <div class="row align-items-center g-5">
+        <!-- Hero Copy -->
+        <div class="col-lg-7">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white border border-info border-opacity-25 small fw-semibold text-primary mb-3 shadow-xs">
+            <span class="pulse-dot"></span>
+            Biomedical Biosensing Research Initiative
+          </div>
+          <h1 class="display-5 fw-bold text-navy mb-3" style="color: var(--ss-navy); line-height: 1.15;">
+            Unlocking Health Insights Through Sweat
+          </h1>
+          <p class="lead mb-4" style="color: var(--ss-text-muted); font-size: 1.15rem; line-height: 1.6;">
+            Sweat Sense explores sweat-based biosensing for the detection of C-reactive protein (CRP), an inflammation-associated biomarker, through innovative sensor technology.
+          </p>
+
+          <div class="d-flex flex-wrap gap-3 mb-4">
+            <a href="#about" class="btn btn-primary-ss">
+              <span>Explore the Technology</span>
+              <i class="bi bi-arrow-down-short fs-5"></i>
+            </a>
+            <a href="#detection-process" class="btn btn-outline-ss">
+              <i class="bi bi-diagram-3 text-teal"></i>
+              <span>How CRP Detection Works</span>
+            </a>
+          </div>
+
+          <!-- Research Status Note -->
+          <div class="p-3 bg-white bg-opacity-75 rounded-3 border border-info border-opacity-25 small text-muted d-flex align-items-start gap-2">
+            <i class="bi bi-info-circle-fill text-primary mt-1"></i>
+            <div>
+              <strong>Scientific Research Notice:</strong> Sweat Sense is an academic &amp; technological investigation into non-invasive biosensing. It represents conceptual sensor workflows and ongoing research, not an operational or clinically validated medical device.
+            </div>
+          </div>
+        </div>
+
+        <!-- Scientific Hero Diagram / Wearable Sensor Patch Illustration -->
+        <div class="col-lg-5 text-center">
+          <div class="ss-card p-4 shadow-lg border-0 position-relative text-start" style="background: #ffffff; border-radius: var(--ss-radius-xl);">
+            <!-- Sensor Header -->
+            <div class="d-flex justify-content-between align-items-center pb-3 border-bottom mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold px-2 py-1">Conceptual Wearable Patch</span>
+              </div>
+              <span class="small text-muted"><i class="bi bi-droplet-half text-teal"></i> Eccrine Sweat Interface</span>
+            </div>
+
+            <!-- Conceptual Sensor Architecture SVG Diagram -->
+            <div class="p-3 rounded-4 mb-3 text-center position-relative" style="background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%); border: 1px solid #c7d2fe;">
+              <svg width="100%" height="220" viewBox="0 0 380 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Conceptual Sweat Biosensor Architecture Diagram">
+                <!-- Skin Layer -->
+                <rect x="20" y="170" width="340" height="35" rx="6" fill="#fde68a" fill-opacity="0.5"/>
+                <text x="190" y="192" font-size="11" fill="#92400e" font-weight="600" text-anchor="middle">Skin Epidermis Surface &amp; Eccrine Glands</text>
+
+                <!-- Sweat Droplets Rising -->
+                <circle cx="100" cy="155" r="5" fill="#19B8A5" opacity="0.8"/>
+                <circle cx="190" cy="150" r="7" fill="#1677FF" opacity="0.9"/>
+                <circle cx="280" cy="157" r="4.5" fill="#19B8A5" opacity="0.7"/>
+
+                <!-- Microfluidic Channel Layer -->
+                <rect x="40" y="80" width="300" height="60" rx="10" fill="#ffffff" stroke="#1677FF" stroke-width="2"/>
+                <path d="M50 110 Q 120 95, 190 110 T 330 110" stroke="#19B8A5" stroke-width="3" stroke-dasharray="4 4" class="sensor-wave"/>
+                
+                <!-- CRP Biomarker Entities -->
+                <circle cx="130" cy="105" r="6" fill="#EF4444" opacity="0.85"/>
+                <text x="130" y="108" font-size="8" fill="#ffffff" font-weight="bold" text-anchor="middle">CRP</text>
+                
+                <circle cx="220" cy="112" r="6" fill="#EF4444" opacity="0.85"/>
+                <text x="220" y="115" font-size="8" fill="#ffffff" font-weight="bold" text-anchor="middle">CRP</text>
+
+                <!-- Bio-recognition Elements (Antibody/Aptamer functionalized electrodes) -->
+                <path d="M180 85 L180 98 M176 92 L184 92" stroke="#102A43" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M250 85 L250 98 M246 92 L254 92" stroke="#102A43" stroke-width="2.5" stroke-linecap="round"/>
+
+                <!-- Transducer Electrode Array -->
+                <rect x="60" y="30" width="260" height="36" rx="6" fill="#102A43"/>
+                <text x="190" y="52" font-size="11" fill="#ffffff" font-weight="bold" text-anchor="middle">Electrochemical / Optical Transducer</text>
+
+                <!-- Signal Trace -->
+                <path d="M75 48 Q 90 38, 105 48 T 135 48" stroke="#19B8A5" stroke-width="2"/>
+              </svg>
+            </div>
+
+            <!-- Conceptual Telemetry Legend -->
+            <div class="row g-2 text-center small">
+              <div class="col-4">
+                <div class="p-2 rounded bg-light border">
+                  <div class="text-teal fw-bold"><i class="bi bi-droplet-fill"></i> Sweat Matrix</div>
+                  <span class="text-muted" style="font-size: 0.75rem;">Capillary Inflow</span>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 rounded bg-light border">
+                  <div class="text-danger fw-bold"><i class="bi bi-circle-fill"></i> CRP Target</div>
+                  <span class="text-muted" style="font-size: 0.75rem;">Biomarker Entity</span>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 rounded bg-light border">
+                  <div class="text-primary fw-bold"><i class="bi bi-activity"></i> Transduction</div>
+                  <span class="text-muted" style="font-size: 0.75rem;">Signal Acquisition</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- C. About Sweat Sense -->
+  <section class="py-5" id="about">
+    <div class="container-xl py-4">
+      <div class="text-center mb-5">
+        <span class="section-tag">About The Project</span>
+        <h2 class="section-title">Bringing Sweat-Based Biosensing Into Focus</h2>
+        <p class="section-subtitle">
+          Sweat Sense is dedicated to investigating how human sweat can serve as a rich biofluid for biosensing, and how C-reactive protein (CRP) detection could support future research into non-invasive or minimally invasive biomarker monitoring.
+        </p>
+      </div>
+
+      <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3">
+          <div class="ss-card ss-card-hover p-4 h-100">
+            <div class="ss-brand-mark mb-3">
+              <i class="bi bi-droplet"></i>
+            </div>
+            <h3 class="h5 fw-bold mb-2">Sweat-Based Sample Analysis</h3>
+            <p class="text-muted small mb-0">
+              Examining the physiological composition of eccrine sweat, passive and stimulated excretion dynamics, and target biomarker partitioning from blood capillaries.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="ss-card ss-card-hover p-4 h-100">
+            <div class="ss-brand-mark mb-3">
+              <i class="bi bi-cpu"></i>
+            </div>
+            <h3 class="h5 fw-bold mb-2">Biosensor Development</h3>
+            <p class="text-muted small mb-0">
+              Designing conceptual microfluidic sample routing architectures combined with bioreceptor functionalized surfaces for selective analyte recognition.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="ss-card ss-card-hover p-4 h-100">
+            <div class="ss-brand-mark mb-3">
+              <i class="bi bi-search"></i>
+            </div>
+            <h3 class="h5 fw-bold mb-2">Biomarker Detection Research</h3>
+            <p class="text-muted small mb-0">
+              Studying molecular interactions, binding kinetics, cross-reactivity challenges, and signal transduction methods specifically tailored for low-volume biofluids.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="ss-card ss-card-hover p-4 h-100">
+            <div class="ss-brand-mark mb-3">
+              <i class="bi bi-smartwatch"></i>
+            </div>
+            <h3 class="h5 fw-bold mb-2">Wearable Monitoring Concepts</h3>
+            <p class="text-muted small mb-0">
+              Envisioning future wearable form factors that could one day enable continuous, point-of-care physiological research without invasive venous punctures.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Distinction Banner -->
+      <div class="p-4 rounded-4 border bg-white shadow-xs">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h4 class="h6 fw-bold text-navy mb-1"><i class="bi bi-journal-medical text-teal me-2"></i>Research Scope vs. Clinical Validation</h4>
+            <p class="text-muted small mb-0">
+              Sweat Sense explicitly distinguishes between preliminary research objectives and clinically validated diagnostic devices. Our focus is fundamental biosensing modeling, scientific inquiry, and sensor interface engineering.
+            </p>
+          </div>
+          <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+            <a href="#limitations" class="btn btn-outline-ss btn-sm">Read Scientific Scope</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- D. Understanding CRP -->
+  <section class="py-5" id="crp-detection" style="background-color: #ffffff;">
+    <div class="container-xl py-4">
+      <div class="text-center mb-5">
+        <span class="section-tag">Biological Significance</span>
+        <h2 class="section-title">Why Detect C-Reactive Protein?</h2>
+        <p class="section-subtitle">
+          C-reactive protein (CRP) is one of the most widely investigated biomarkers in biomedical science, serving as a key systemic indicator of acute and chronic inflammation.
+        </p>
+      </div>
+
+      <div class="row g-4 mb-5">
+        <!-- Educational Card 1: What is CRP? -->
+        <div class="col-lg-6">
+          <div class="edu-card h-100">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-1">Biomarker Profile</span>
+              <span class="small text-muted">Molecular Structure: Pentameric Protein</span>
+            </div>
+            <h3 class="h4 fw-bold text-navy mb-3">What is CRP?</h3>
+            <p class="text-muted">
+              C-reactive protein (CRP) is a homopentameric acute-phase reactant protein synthesized primarily by hepatocytes in the liver. Its production is rapidly triggered in response to pro-inflammatory cytokines such as interleukin-6 (IL-6).
+            </p>
+            <ul class="list-unstyled text-muted small mb-3">
+              <li class="mb-2 d-flex align-items-start gap-2">
+                <i class="bi bi-check-circle-fill text-teal mt-1"></i>
+                <span><strong>Acute-Phase Indicator:</strong> Circulating levels in blood plasma can surge dramatically within hours of inflammatory stimuli or tissue damage.</span>
+              </li>
+              <li class="mb-2 d-flex align-items-start gap-2">
+                <i class="bi bi-check-circle-fill text-teal mt-1"></i>
+                <span><strong>Nonspecific Biomarker:</strong> An elevated CRP measurement signals the presence of systemic inflammation but <em>does not diagnose any specific medical condition on its own</em>.</span>
+              </li>
+              <li class="mb-2 d-flex align-items-start gap-2">
+                <i class="bi bi-check-circle-fill text-teal mt-1"></i>
+                <span><strong>Clinical Context:</strong> Widely assessed in cardiovascular risk stratification, infection tracking, and autoimmune research.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Educational Card 2: Why Sweat? -->
+        <div class="col-lg-6">
+          <div class="edu-card edu-card-blue h-100">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="badge bg-info-subtle text-info fw-bold px-3 py-1">Sampling Medium</span>
+              <span class="small text-muted">Eccrine Biofluid Dynamics</span>
+            </div>
+            <h3 class="h4 fw-bold text-navy mb-3">Why Sweat?</h3>
+            <p class="text-muted">
+              Human sweat provides a compelling non-invasive biofluid containing electrolytes, metabolites, hormones, and proteins that can potentially be harvested without needles or invasive clinical equipment.
+            </p>
+            <ul class="list-unstyled text-muted small mb-3">
+              <li class="mb-2 d-flex align-items-start gap-2">
+                <i class="bi bi-check-circle-fill text-primary mt-1"></i>
+                <span><strong>Continuous Non-Invasive Access:</strong> Sweat can be sampled continuously over extended periods using wearable skin-conformal sensor patches.</span>
+              </li>
+              <li class="mb-2 d-flex align-items-start gap-2">
+                <i class="bi bi-exclamation-triangle-fill text-warning mt-1"></i>
+                <span><strong>Scientific Challenges:</strong> CRP exists in sweat at concentrations significantly lower than in blood plasma, requiring ultra-sensitive detection limits.</span>
+              </li>
+              <li class="mb-2 d-flex align-items-start gap-2">
+                <i class="bi bi-exclamation-triangle-fill text-warning mt-1"></i>
+                <span><strong>Threshold Interpretation:</strong> Established clinical blood CRP reference ranges (e.g. &lt;3 mg/L) <em>cannot</em> be directly applied to sweat without rigorous analytical and physiological correlation.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- E. How the Detection Process Works -->
+  <section class="py-5" id="detection-process">
+    <div class="container-xl py-4">
+      <div class="text-center mb-5">
+        <span class="section-tag">Conceptual Architecture</span>
+        <h2 class="section-title">How the Detection Process Works</h2>
+        <p class="section-subtitle">
+          A four-phase conceptual workflow modeling sample harvesting, microfluidic transport, bioreceptor interaction, and quantitative signal transduction.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Step 1 -->
+        <div class="col-md-6 col-lg-3">
+          <div class="ss-card p-4 h-100">
+            <div class="step-number-circle">01</div>
+            <span class="badge bg-light text-navy fw-semibold mb-2">Phase 1</span>
+            <h4 class="h6 fw-bold text-navy mb-2">Sweat Collection</h4>
+            <p class="text-muted small mb-0">
+              A skin-contact sensor interface receives natural or iontophoretically stimulated eccrine sweat via hydrophilic micro-wells, avoiding epidermal contamination.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="col-md-6 col-lg-3">
+          <div class="ss-card p-4 h-100">
+            <div class="step-number-circle">02</div>
+            <span class="badge bg-light text-navy fw-semibold mb-2">Phase 2</span>
+            <h4 class="h6 fw-bold text-navy mb-2">Sample Interaction</h4>
+            <p class="text-muted small mb-0">
+              Capillary action directs the sweat volume through microfluidic channels designed to regulate flow velocity and minimize sample evaporation during transit.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="col-md-6 col-lg-3">
+          <div class="ss-card p-4 h-100">
+            <div class="step-number-circle">03</div>
+            <span class="badge bg-light text-navy fw-semibold mb-2">Phase 3</span>
+            <h4 class="h6 fw-bold text-navy mb-2">CRP Recognition</h4>
+            <p class="text-muted small mb-0">
+              Target C-reactive protein molecules selectively interact with an immobilized bio-recognition layer (such as anti-CRP antibodies or DNA/RNA aptamers).
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="col-md-6 col-lg-3">
+          <div class="ss-card p-4 h-100">
+            <div class="step-number-circle">04</div>
+            <span class="badge bg-light text-navy fw-semibold mb-2">Phase 4</span>
+            <h4 class="h6 fw-bold text-navy mb-2">Signal Analysis</h4>
+            <p class="text-muted small mb-0">
+              Transducer circuitry translates molecular binding events into impedance or amperometric changes, analyzing signal variance against calibrated baseline models.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 p-3 bg-white rounded-3 border text-center small text-muted">
+        <i class="bi bi-info-circle text-primary me-1"></i>
+        <strong>Research Note:</strong> This four-step model represents a proposed scientific workflow. Quantitative performance metrics (detection limits, response times, sensitivity) must derive from empirical wet-lab validation.
+      </div>
+    </div>
+  </section>
+
+  <!-- F. Technology and Research Highlights -->
+  <section class="py-5" id="research" style="background-color: #ffffff;">
+    <div class="container-xl py-4">
+      <div class="text-center mb-5">
+        <span class="section-tag">Scientific Exploration</span>
+        <h2 class="section-title">Technology &amp; Research Highlights</h2>
+        <p class="section-subtitle">
+          Core scientific competencies guiding the Sweat Sense multidisciplinary biosensing roadmap.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Card 1 -->
+        <div class="col-md-6">
+          <div class="ss-card p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="rounded-3 bg-primary bg-opacity-10 text-primary p-3 fs-4">
+                  <i class="bi bi-droplet-half"></i>
+                </div>
+                <div>
+                  <h3 class="h5 fw-bold text-navy mb-1">Sweat Sample Analysis</h3>
+                  <span class="small text-teal fw-semibold">Biofluid Characterization</span>
+                </div>
+              </div>
+              <p class="text-muted">
+                Investigating sweat rate variance, pH fluctuations, salinity interference, and analyte degradation kinetics under diverse physiological and thermal states.
+              </p>
+            </div>
+            <div class="pt-3 border-top small text-muted d-flex justify-content-between">
+              <span>Primary Focus: Matrix Interferences</span>
+              <span class="fw-semibold text-primary">In Vitro Study</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-6">
+          <div class="ss-card p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="rounded-3 bg-teal text-white p-3 fs-4" style="background-color: var(--ss-teal);">
+                  <i class="bi bi-cpu"></i>
+                </div>
+                <div>
+                  <h3 class="h5 fw-bold text-navy mb-1">Biosensor Technology</h3>
+                  <span class="small text-teal fw-semibold">Electrochemical Transduction</span>
+                </div>
+              </div>
+              <p class="text-muted">
+                Evaluating working, counter, and reference electrode functionalization methods with carbon nanomaterials and conductive polymers for signal amplification.
+              </p>
+            </div>
+            <div class="pt-3 border-top small text-muted d-flex justify-content-between">
+              <span>Primary Focus: Surface Chemistry</span>
+              <span class="fw-semibold text-teal">Transducer R&amp;D</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-6">
+          <div class="ss-card p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="rounded-3 bg-danger bg-opacity-10 text-danger p-3 fs-4">
+                  <i class="bi bi-shield-plus"></i>
+                </div>
+                <div>
+                  <h3 class="h5 fw-bold text-navy mb-1">CRP Biomarker Research</h3>
+                  <span class="small text-teal fw-semibold">Inflammatory Kinetics</span>
+                </div>
+              </div>
+              <p class="text-muted">
+                Studying the correlation ratio between blood plasma CRP and eccrine sweat CRP to establish whether sweat-based kinetics reflect systemic inflammatory changes.
+              </p>
+            </div>
+            <div class="pt-3 border-top small text-muted d-flex justify-content-between">
+              <span>Primary Focus: Physiological Partitioning</span>
+              <span class="fw-semibold text-danger">Translational Science</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="col-md-6">
+          <div class="ss-card p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="rounded-3 bg-info bg-opacity-10 text-info p-3 fs-4">
+                  <i class="bi bi-layers-half"></i>
+                </div>
+                <div>
+                  <h3 class="h5 fw-bold text-navy mb-1">Wearable Sensor Concepts</h3>
+                  <span class="small text-teal fw-semibold">Skin-Conformal Patch Engineering</span>
+                </div>
+              </div>
+              <p class="text-muted">
+                Conceptualizing biocompatible, flexible polyimide substrates and micro-pumps capable of continuous adherence without irritating sensitive epidermal tissue.
+              </p>
+            </div>
+            <div class="pt-3 border-top small text-muted d-flex justify-content-between">
+              <span>Primary Focus: Ergonomics &amp; Materials</span>
+              <span class="fw-semibold text-info">Conceptual Design</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- G. Scientific Limitations and Responsible Use -->
+  <section class="py-5" id="limitations">
+    <div class="container-xl py-4">
+      <div class="disclaimer-box shadow-xs">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-shield-exclamation text-teal fs-3"></i>
+          <h2 class="h4 fw-bold text-navy mb-0">Scientific Limitations &amp; Responsible Use</h2>
+        </div>
+        <p class="text-muted mb-4">
+          Transparent scientific inquiry is essential when exploring novel biosensing modalities. Visitors and researchers must note the following critical boundaries:
+        </p>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="p-3 bg-white rounded-3 border">
+              <h5 class="h6 fw-bold text-navy mb-1"><i class="bi bi-water text-primary me-1"></i> Sweat Volume &amp; Composition Variance</h5>
+              <p class="small text-muted mb-0">
+                Sweat generation rates, salinity, and pH vary substantially across individuals, ambient temperatures, and hydration states, which directly impacts biofluid sampling consistency.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 bg-white rounded-3 border">
+              <h5 class="h6 fw-bold text-navy mb-1"><i class="bi bi-arrow-left-right text-primary me-1"></i> Sweat vs. Blood CRP Dissimilarity</h5>
+              <p class="small text-muted mb-0">
+                Physiological levels of C-reactive protein in sweat are typically orders of magnitude lower than in blood plasma, and partition dynamics remain an active subject of ongoing biomedical investigation.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 bg-white rounded-3 border">
+              <h5 class="h6 fw-bold text-navy mb-1"><i class="bi bi-sliders text-teal me-1"></i> Calibration &amp; Interference Rigor</h5>
+              <p class="small text-muted mb-0">
+                Reliable quantification requires multi-point calibration, nonspecific binding mitigation, and strict analytical validation under controlled laboratory testing.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 bg-white rounded-3 border">
+              <h5 class="h6 fw-bold text-navy mb-1"><i class="bi bi-hospital text-danger me-1"></i> Non-Diagnostic Classification</h5>
+              <p class="small text-muted mb-0">
+                Research findings from Sweat Sense must <strong>never</strong> be interpreted as a clinical diagnosis. Medical decisions must never be based on an unvalidated prototype or experimental calculation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- H. Call to Action -->
+  <section class="py-5 text-center position-relative overflow-hidden" style="background: linear-gradient(135deg, #102A43 0%, #0d2338 60%, #083344 100%); color: #ffffff;">
+    <div class="container-xl py-5 position-relative" style="z-index: 2;">
+      <h2 class="display-6 fw-bold text-white mb-3">Discover the Potential of Sweat-Based Biosensing</h2>
+      <p class="lead text-light mb-4" style="max-width: 650px; margin-left: auto; margin-right: auto; color: #cbd5e1;">
+        Explore the science behind CRP detection and the future of wearable biomarker research. Join our academic portal to access research summaries and workspace telemetry tools.
+      </p>
+
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="#about" class="btn btn-outline-light btn-lg">
+          <i class="bi bi-info-circle me-1"></i> Explore Our Technology
+        </a>
+        <a href="{% url 'accounts:signup' %}" class="btn btn-teal-ss btn-lg">
+          <span>Create an Account</span>
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- I. Footer -->
+<footer class="ss-footer" id="mainFooter">
+  <div class="container-xl">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <a href="{% url 'root' %}" class="ss-brand mb-3">
+          <div class="ss-brand-mark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#ffffff"/>
+              <path d="M8.5 14.5c.9-1.2 2-1.7 3.5-1.7s2.6.5 3.5 1.7" stroke="#102A43" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="12" cy="10.5" r="1.4" fill="#102A43"/>
+            </svg>
+          </div>
+          <div class="ss-brand-text">
+            <span class="ss-brand-name text-white">Sweat Sense</span>
+            <span class="ss-brand-tagline text-light">Sensing Sweat. Exploring Health.</span>
+          </div>
+        </a>
+        <p class="small text-light" style="color: #94a3b8; max-width: 320px;">
+          Investigating non-invasive biosensing platforms for C-reactive protein (CRP) quantification in eccrine sweat.
+        </p>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h5>Navigation</h5>
+        <ul class="ss-footer-links">
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#about">About Project</a></li>
+          <li><a href="#crp-detection">CRP Detection</a></li>
+          <li><a href="#detection-process">How It Works</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h5>Research</h5>
+        <ul class="ss-footer-links">
+          <li><a href="#research">Highlights</a></li>
+          <li><a href="#limitations">Limitations</a></li>
+          <li><a href="{% url 'accounts:login' %}">Researcher Login</a></li>
+          <li><a href="{% url 'accounts:signup' %}">Create Account</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-4">
+        <h5>Academic Information</h5>
+        <ul class="ss-footer-links">
+          <li><a href="#contactModal" data-bs-toggle="modal">Contact Academic Team</a></li>
+          <li><a href="#disclaimerModal" data-bs-toggle="modal">Scientific Disclaimer</a></li>
+          <li><a href="#privacyModal" data-bs-toggle="modal">Privacy Policy</a></li>
+          <li><a href="#termsModal" data-bs-toggle="modal">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ss-footer-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div>
+        © 2026 Sweat Sense Project. All rights reserved.
+      </div>
+      <div>
+        <span>Non-Clinical Biomedical Research Platform</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Contact Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: var(--ss-radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="contactModalLabel"><i class="bi bi-envelope text-primary me-2"></i>Contact Sweat Sense Team</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small mb-3">
+          For academic collaborations, biosensor dataset inquiries, or research feedback, please reach out to our primary team:
+        </p>
+        <div class="p-3 bg-light rounded-3 border mb-3">
+          <div class="small fw-bold text-navy mb-1">Research Lead:</div>
+          <div class="small text-muted mb-2">Sweat Sense Biosensing Group</div>
+          <div class="small fw-bold text-navy mb-1">Email:</div>
+          <div class="small"><a href="mailto:research@sweatsense.org" class="text-primary">research@sweatsense.org</a></div>
+        </div>
+        <p class="small text-muted mb-0">We aim to respond to academic and scientific inquiries within 2-3 business days.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scientific Disclaimer Modal -->
+<div class="modal fade" id="disclaimerModal" tabindex="-1" aria-labelledby="disclaimerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: var(--ss-radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="disclaimerModalLabel"><i class="bi bi-shield-exclamation text-teal me-2"></i>Scientific &amp; Medical Disclaimer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6 class="fw-bold">1. Non-Diagnostic Purpose</h6>
+        <p class="text-muted small">
+          Sweat Sense is a technological research and exploratory initiative. It is not an FDA-cleared, CE-marked, or clinically validated medical device.
+        </p>
+        <h6 class="fw-bold">2. No Clinical Decisions</h6>
+        <p class="text-muted small">
+          Information presented on this website must not be used as a substitute for professional medical advice, clinical diagnosis, or therapeutic treatment.
+        </p>
+        <h6 class="fw-bold">3. Analytical Variability</h6>
+        <p class="text-muted small">
+          Sweat CRP levels are physiologically variable and have not been established as a direct one-to-one clinical proxy for blood serum CRP thresholds.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary-ss" data-bs-dismiss="modal">Acknowledged</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: var(--ss-radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="termsModalLabel">Terms of Use</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6 class="fw-bold">Academic &amp; Research Access</h6>
+        <p class="text-muted small">Sweat Sense materials are intended for scientific information, education, and exploratory biosensor prototyping.</p>
+        <h6 class="fw-bold">Account Integrity</h6>
+        <p class="text-muted small">Registered users are responsible for keeping credentials secure and accessing the portal in compliance with academic research integrity.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary-ss" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Privacy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: var(--ss-radius-lg);">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="privacyModalLabel">Privacy Policy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6 class="fw-bold">Data Stewardship</h6>
+        <p class="text-muted small">Sweat Sense collects only essential account credentials (username, email, encrypted password hash). No personal physiological records are stored without explicit protocol consent.</p>
+        <h6 class="fw-bold">Cookie Usage</h6>
+        <p class="text-muted small">Secure HttpOnly session tokens are utilized solely for user authentication and CSRF defense.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary-ss" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends 'portal_base.html' %}
+{% load static %}
+
+{% block title %}Medical &amp; Laboratory Reports — Sweat Sense{% endblock %}
+{% block section_title %}Laboratory &amp; Diagnostic Reports{% endblock %}
+
+{% block portal_content %}
+<div class="row g-4">
+  <!-- 1. Header Banner -->
+  <div class="col-12">
+    <div class="portal-card position-relative" style="background: linear-gradient(135deg, #FFFFFF 0%, #F0FDFB 100%); border-left: 5px solid var(--portal-teal);">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <span class="badge bg-info-subtle text-teal fw-semibold mb-2 px-3 py-1" style="color: var(--portal-teal);">Verified Diagnostic Archive</span>
+          <h2 class="h4 fw-bold text-navy mb-1" style="color: var(--portal-navy);">Patient Pathology Reports</h2>
+          <p class="text-muted small mb-0" style="max-width: 680px;">
+            Access and download validated clinical biochemistry, inflammatory panels, and complete blood count diagnostic records issued by certified laboratory partners.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Educational Note on CRP & Validated Diagnostics -->
+  <div class="col-12">
+    <div class="crp-educational-card shadow-xs">
+      <div class="d-flex align-items-start gap-3">
+        <div class="rounded-3 p-2 bg-white text-teal fs-4 shadow-xs" style="color: var(--portal-teal);">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <div>
+          <h3 class="h6 fw-bold mb-1" style="color: var(--portal-navy);">Clinical Validity Notice Regarding CRP Diagnostics</h3>
+          <p class="small text-muted mb-0">
+            C-reactive protein (CRP) test results displayed in this portal are certified laboratory reports provided by authorized reference laboratories. Sweat Sense does not present conceptual sweat-sensor telemetry as diagnostic medical reports. Consult your attending physician for clinical interpretation of biomarker levels.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Search & Filter Bar -->
+  <div class="col-12">
+    <div class="portal-card py-3">
+      <form method="get" action="{% url 'reports:list' %}" class="row g-3 align-items-center">
+        <!-- Search Input -->
+        <div class="col-md-5">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-white text-muted border-end-0">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              name="q"
+              class="form-control border-start-0"
+              placeholder="Search by test name, laboratory, or notes..."
+              value="{{ search_query }}"
+            >
+          </div>
+        </div>
+
+        <!-- Category Dropdown Filter -->
+        <div class="col-md-4">
+          <select name="category" class="form-select form-select-sm" onchange="this.form.submit();">
+            <option value="all">All Diagnostic Categories ({{ total_count }})</option>
+            {% for cat_val, cat_label in categories %}
+              <option value="{{ cat_val }}" {% if selected_category == cat_val %}selected{% endif %}>
+                {{ cat_label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Date Filter -->
+        <div class="col-md-2">
+          <input
+            type="date"
+            name="date"
+            class="form-control form-control-sm"
+            value="{{ selected_date }}"
+            onchange="this.form.submit();"
+            title="Filter by report date"
+          >
+        </div>
+
+        <!-- Reset Button -->
+        <div class="col-md-1 text-md-end">
+          <a href="{% url 'reports:list' %}" class="btn btn-outline-secondary btn-sm w-100" title="Clear search &amp; filters">
+            <i class="bi bi-arrow-counterclockwise"></i>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Reports List Table -->
+  <div class="col-12">
+    <div class="portal-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h6 fw-bold text-navy mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-file-earmark-text text-primary"></i>
+          Your Authorized Medical Reports
+        </h3>
+        <span class="badge bg-light text-muted border">Showing {{ reports.count }} of {{ total_count }}</span>
+      </div>
+
+      {% if reports %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr class="small text-muted">
+                <th>Report Identifier</th>
+                <th>Report Title</th>
+                <th>Category</th>
+                <th>Issuing Facility</th>
+                <th>Date of Issue</th>
+                <th>Verification</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for report in reports %}
+                <tr>
+                  <td>
+                    <span class="fw-bold text-navy small">REP-{{ report.id|stringformat:"04d" }}</span>
+                  </td>
+                  <td>
+                    <div class="fw-semibold text-navy">{{ report.title }}</div>
+                    {% if report.notes %}
+                      <div class="text-muted" style="font-size: 0.75rem;">{{ report.notes|truncatechars:60 }}</div>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-navy border" style="font-size: 0.75rem;">
+                      {{ report.get_category_display }}
+                    </span>
+                  </td>
+                  <td class="small text-muted">{{ report.issuing_lab }}</td>
+                  <td class="small">{{ report.report_date|date:"M d, Y" }}</td>
+                  <td>
+                    <span class="badge bg-success-subtle text-success">
+                      <i class="bi bi-patch-check-fill me-1"></i> {{ report.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <div class="btn-group btn-group-sm">
+                      <a href="{% url 'reports:view' report.id %}" class="btn btn-outline-ss" title="View Report Document">
+                        <i class="bi bi-eye me-1"></i> View
+                      </a>
+                      <a href="{% url 'reports:download' report.id %}" class="btn btn-outline-secondary" title="Download Document">
+                        <i class="bi bi-download"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="portal-empty-state py-5 my-2">
+          <div class="portal-empty-icon"><i class="bi bi-file-earmark-x"></i></div>
+          <h4 class="h6 fw-bold text-navy mb-1">No reports are available yet.</h4>
+          <p class="text-muted small mb-0" style="max-width: 480px; margin: 0 auto;">
+            Laboratory diagnostic reports will appear here once submitted and verified by authorized hospital reference staff.
+          </p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

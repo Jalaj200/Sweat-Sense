@@ -1,0 +1,101 @@
+{% extends 'portal_base.html' %}
+{% load static %}
+
+{% block title %}{{ report.title }} — Sweat Sense Reports{% endblock %}
+{% block section_title %}Report Document View{% endblock %}
+
+{% block portal_content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <a href="{% url 'reports:list' %}" class="btn btn-outline-ss btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to All Reports
+      </a>
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print();">
+          <i class="bi bi-printer me-1"></i> Print
+        </button>
+        <a href="{% url 'reports:download' report.id %}" class="btn btn-primary-ss btn-sm">
+          <i class="bi bi-download me-1"></i> Download PDF
+        </a>
+      </div>
+    </div>
+
+    <!-- Official Clinical Document Card -->
+    <div class="portal-card p-4 p-md-5 bg-white shadow-sm border" id="printableReport">
+      <!-- Laboratory Letterhead -->
+      <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="ss-brand-mark" style="width: 50px; height: 50px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#ffffff"/>
+              <path d="M8.5 14.5c.9-1.2 2-1.7 3.5-1.7s2.6.5 3.5 1.7" stroke="#102A43" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="12" cy="10.5" r="1.4" fill="#102A43"/>
+            </svg>
+          </div>
+          <div>
+            <div class="h5 fw-bold text-navy mb-0">Sweat Sense Clinical Reference Laboratory</div>
+            <div class="small text-muted">{{ report.issuing_lab }} • CLIA / CAP Accredited Diagnostic Center</div>
+          </div>
+        </div>
+
+        <div class="text-md-end">
+          <span class="badge bg-success-subtle text-success fs-6 px-3 py-1 mb-1">
+            <i class="bi bi-patch-check-fill me-1"></i> {{ report.get_status_display }}
+          </span>
+          <div class="small text-muted">Document ID: REP-{{ report.id|stringformat:"04d" }}</div>
+        </div>
+      </div>
+
+      <!-- Patient & Requisition Metadata -->
+      <div class="row g-3 p-3 bg-light rounded-3 mb-4 small">
+        <div class="col-sm-6 col-md-3">
+          <span class="text-muted d-block">Patient Name:</span>
+          <span class="fw-bold text-navy">{{ report.patient.get_full_name|default:report.patient.username }}</span>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <span class="text-muted d-block">Patient Username:</span>
+          <span class="fw-semibold text-navy">{{ report.patient.username }}</span>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <span class="text-muted d-block">Report Issue Date:</span>
+          <span class="fw-bold text-navy">{{ report.report_date|date:"F d, Y" }}</span>
+        </div>
+        <div class="col-sm-6 col-md-3">
+          <span class="text-muted d-block">Diagnostic Category:</span>
+          <span class="fw-semibold text-primary">{{ report.get_category_display }}</span>
+        </div>
+      </div>
+
+      <!-- Report Details Body -->
+      <div class="mb-5">
+        <h3 class="h5 fw-bold text-navy mb-3 pb-2 border-bottom">{{ report.title }}</h3>
+        
+        <div class="p-4 rounded-3 border bg-light mb-4">
+          <h4 class="h6 fw-bold text-navy mb-2"><i class="bi bi-chat-left-text text-primary me-2"></i>Clinical Pathologist Findings &amp; Requisition Notes</h4>
+          <p class="text-muted small mb-0" style="line-height: 1.7;">
+            {{ report.notes|default:"This laboratory diagnostic record was generated in accordance with standard medical laboratory protocols. Specific reference intervals and physician interpretation remarks are archived with your consulting practitioner." }}
+          </p>
+        </div>
+
+        <div class="p-3 bg-info-subtle bg-opacity-25 rounded-3 border border-info border-opacity-25 small text-muted">
+          <i class="bi bi-info-circle text-primary me-1"></i>
+          <strong>Clinical Caution:</strong> Laboratory values should always be correlated with clinical history and reviewed by your licensed physician.
+        </div>
+      </div>
+
+      <!-- Authorized Signature Area -->
+      <div class="row pt-4 border-top text-muted small">
+        <div class="col-md-6">
+          <div>Verified By: <strong>Authorized Laboratory Director</strong></div>
+          <div>Sweat Sense Quality Assurance Division</div>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <div>Record Verification Timestamp: {{ report.uploaded_at|date:"Y-m-d H:i:s" }} UTC</div>
+          <div>Strict Patient Privacy Protocol Active</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+
+# Django local SQLite database (contains local patient and booking data)
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+
+# Media files (contains private patient documents and uploaded medical reports)
+media/
+secure_reports/
+
+# Staticfiles collected output
+staticfiles/
+
+# IDE, editor and tool configurations
+.claude/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Operating system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Temporary files and logs
+*.log
+scratch/

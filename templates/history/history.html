@@ -1,0 +1,117 @@
+{% extends 'portal_base.html' %}
+{% load static %}
+
+{% block title %}Healthcare Activity History — Sweat Sense{% endblock %}
+{% block section_title %}Healthcare History &amp; Activity Log{% endblock %}
+
+{% block portal_content %}
+<div class="row g-4">
+  <!-- 1. Header Banner -->
+  <div class="col-12">
+    <div class="portal-card position-relative" style="background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%); border-left: 5px solid var(--portal-navy);">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <span class="badge bg-secondary-subtle text-navy fw-semibold mb-2 px-3 py-1">Chronological Health Journal</span>
+          <h2 class="h4 fw-bold text-navy mb-1" style="color: var(--portal-navy);">Patient Historical Timeline</h2>
+          <p class="text-muted small mb-0" style="max-width: 650px;">
+            A unified, chronological audit log of your scheduled doctor appointments, blood sample collections, issued laboratory reports, and healthcare activities.
+          </p>
+        </div>
+        <div class="d-flex gap-2">
+          <span class="badge bg-light text-navy border px-3 py-2 small">
+            Total Records: <strong>{{ total_count }}</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Interactive Category Filter Tabs -->
+  <div class="col-12">
+    <div class="portal-card py-2 px-3">
+      <ul class="nav nav-pills gap-2 small fw-semibold" id="historyFilterNav">
+        <li class="nav-item">
+          <a class="nav-link {% if current_filter == 'all' %}active bg-primary text-white{% else %}text-muted bg-light{% endif %}" href="?filter=all">
+            <i class="bi bi-grid-fill me-1"></i> All Activities ({{ total_count }})
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if current_filter == 'consultation' %}active bg-primary text-white{% else %}text-muted bg-light{% endif %}" href="?filter=consultation">
+            <i class="bi bi-person-badge me-1"></i> Doctor Consultations ({{ consultations_count }})
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if current_filter == 'blood_collection' %}active bg-primary text-white{% else %}text-muted bg-light{% endif %}" href="?filter=blood_collection">
+            <i class="bi bi-droplet-half me-1"></i> Blood Collections ({{ blood_count }})
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if current_filter == 'reports' %}active bg-primary text-white{% else %}text-muted bg-light{% endif %}" href="?filter=reports">
+            <i class="bi bi-file-earmark-medical me-1"></i> Medical Reports ({{ reports_count }})
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3. Chronological Activity Timeline -->
+  <div class="col-12">
+    <div class="portal-card">
+      <h3 class="h6 fw-bold text-navy mb-4 d-flex align-items-center gap-2">
+        <i class="bi bi-clock-history text-primary"></i>
+        Chronological Timeline
+      </h3>
+
+      {% if timeline_items %}
+        <div class="history-timeline">
+          {% for item in timeline_items %}
+            <div class="history-timeline-item">
+              <div class="history-timeline-icon {{ item.icon_bg }}">
+                <i class="bi {{ item.icon }}"></i>
+              </div>
+
+              <div class="history-timeline-content">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                  <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                      <span class="badge bg-light text-navy border" style="font-size: 0.7rem;">
+                        {{ item.category_label }}
+                      </span>
+                      <span class="small fw-bold text-navy">{{ item.record_id }}</span>
+                    </div>
+                    <h4 class="h6 fw-bold text-navy mb-0">{{ item.title }}</h4>
+                    <div class="small text-muted">{{ item.subtitle }}</div>
+                  </div>
+
+                  <span class="badge {% if item.status_raw == 'confirmed' or item.status_raw == 'completed' or item.status_raw == 'ready' %}bg-success-subtle text-success{% elif item.status_raw == 'cancelled' %}bg-secondary-subtle text-muted{% else %}bg-warning-subtle text-warning{% endif %}">
+                    {{ item.status }}
+                  </span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top small text-muted">
+                  <div>
+                    <i class="bi bi-calendar3 text-primary me-1"></i> {{ item.date|date:"F d, Y" }}
+                    <span class="mx-1">•</span>
+                    <i class="bi bi-clock me-1"></i> {{ item.time_slot }}
+                  </div>
+
+                  <a href="{{ item.url }}" class="btn btn-outline-ss btn-sm py-0 px-2" style="font-size: 0.75rem;">
+                    View Record <i class="bi bi-arrow-right ms-1"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="portal-empty-state py-5 my-2">
+          <div class="portal-empty-icon"><i class="bi bi-journal-x"></i></div>
+          <h4 class="h6 fw-bold text-navy mb-1">No activities found for this filter.</h4>
+          <p class="text-muted small mb-3">Your appointments, blood requisitions, and report releases will be automatically recorded in this timeline.</p>
+          <a href="?filter=all" class="btn btn-outline-ss btn-sm">Reset Filter to All</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

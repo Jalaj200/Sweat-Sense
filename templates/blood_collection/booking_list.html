@@ -1,0 +1,266 @@
+{% extends 'portal_base.html' %}
+{% load static %}
+
+{% block title %}Blood Collection Services — Sweat Sense{% endblock %}
+{% block section_title %}Blood Collection Services{% endblock %}
+
+{% block portal_content %}
+<div class="row g-4">
+  <!-- 1. Header Banner -->
+  <div class="col-12">
+    <div class="portal-card position-relative" style="background: linear-gradient(135deg, #FFFFFF 0%, #FFF5F5 100%); border-left: 5px solid #EF4444;">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <span class="badge bg-danger-subtle text-danger fw-semibold mb-2 px-3 py-1">Clinical Phlebotomy Laboratory</span>
+          <h2 class="h4 fw-bold text-navy mb-1" style="color: var(--portal-navy);">Certified Blood Sample Collection</h2>
+          <p class="text-muted small mb-0" style="max-width: 680px;">
+            Schedule routine venous phlebotomy for complete blood counts, metabolic profiles, and quantitative serum inflammatory markers. 
+            <em>Note: Clinical blood collection is a certified diagnostic service, distinct from ongoing sweat-based CRP biosensing research.</em>
+          </p>
+        </div>
+        <div>
+          <a href="#bookingFormCard" class="btn btn-primary-ss btn-sm" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);">
+            <i class="bi bi-droplet-half me-1"></i> New Blood Requisition
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Booking Scheduling Form & Guidelines (Side-by-side) -->
+  <div class="col-lg-7" id="bookingFormCard">
+    <div class="portal-card">
+      <h3 class="h6 fw-bold text-navy mb-3 d-flex align-items-center gap-2">
+        <i class="bi bi-calendar-plus text-danger"></i>
+        Schedule Blood Sample Collection
+      </h3>
+
+      <form method="post" action="{% url 'blood_collection:list' %}" novalidate id="bloodCollectionForm">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="ss-alert ss-alert-danger mb-3">
+            <span class="ss-alert-icon"><i class="bi bi-exclamation-octagon-fill"></i></span>
+            <div class="ss-alert-content">
+              {% for err in form.non_field_errors %}
+                <div>{{ err }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="row g-3">
+          <!-- Patient Name -->
+          <div class="col-md-6">
+            <label for="{{ form.patient_name.id_for_label }}" class="form-label fw-semibold small text-navy">
+              Patient Full Name <span class="text-danger">*</span>
+            </label>
+            {{ form.patient_name }}
+            {% if form.patient_name.errors %}
+              <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.patient_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Contact Number -->
+          <div class="col-md-6">
+            <label for="{{ form.contact_number.id_for_label }}" class="form-label fw-semibold small text-navy">
+              Contact Telephone Number <span class="text-danger">*</span>
+            </label>
+            {{ form.contact_number }}
+            {% if form.contact_number.errors %}
+              <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.contact_number.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Collection Date -->
+          <div class="col-md-6">
+            <label for="{{ form.collection_date.id_for_label }}" class="form-label fw-semibold small text-navy">
+              Requested Collection Date <span class="text-danger">*</span>
+            </label>
+            {{ form.collection_date }}
+            <div class="form-text" style="font-size: 0.75rem;">Select today or an upcoming collection date.</div>
+            {% if form.collection_date.errors %}
+              <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.collection_date.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Time Slot Selection -->
+          <div class="col-md-6">
+            <label for="{{ form.time_slot.id_for_label }}" class="form-label fw-semibold small text-navy">
+              Collection Time Slot <span class="text-danger">*</span>
+            </label>
+            {{ form.time_slot }}
+            {% if form.time_slot.errors %}
+              <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.time_slot.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Collection Location Selection -->
+          <div class="col-12">
+            <label for="{{ form.collection_location.id_for_label }}" class="form-label fw-semibold small text-navy">
+              Designated Collection Center / Location <span class="text-danger">*</span>
+            </label>
+            {{ form.collection_location }}
+            {% if form.collection_location.errors %}
+              <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.collection_location.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Fasting Checkbox -->
+          <div class="col-12">
+            <div class="form-check p-3 bg-light rounded border">
+              {{ form.fasting_required }}
+              <label class="form-check-label small fw-semibold text-navy ms-1" for="{{ form.fasting_required.id_for_label }}">
+                Fasting Protocol Required (Check if fasting panels e.g., Lipids, Blood Glucose, CRP are requested)
+              </label>
+              <div class="form-text ms-4" style="font-size: 0.75rem;">
+                Requires no caloric intake for 8-10 hours prior to phlebotomy. Water consumption is encouraged.
+              </div>
+            </div>
+          </div>
+
+          <!-- Special Notes -->
+          <div class="col-12">
+            <label for="{{ form.special_notes.id_for_label }}" class="form-label fw-semibold small text-navy">
+              Special Instructions or Test Requisitions (Optional)
+            </label>
+            {{ form.special_notes }}
+            {% if form.special_notes.errors %}
+              <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.special_notes.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Submit Button -->
+          <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-primary-ss w-100" style="background: linear-gradient(135deg, #102A43 0%, #1677FF 100%);">
+              <i class="bi bi-calendar-check me-2"></i> Submit Blood Collection Booking
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Phlebotomy Preparation Guidelines -->
+  <div class="col-lg-5">
+    <div class="portal-card bg-light border mb-4">
+      <h3 class="h6 fw-bold mb-3 text-navy d-flex align-items-center gap-2">
+        <i class="bi bi-shield-check text-primary"></i>
+        Official Pathology Instructions
+      </h3>
+
+      <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
+        <div class="rounded-circle bg-white p-2 text-primary shadow-xs">
+          <i class="bi bi-cup-straw fs-5"></i>
+        </div>
+        <div>
+          <div class="fw-bold text-navy small">Hydration Advice</div>
+          <p class="text-muted small mb-0">Drink 1-2 glasses of plain water before your blood draw to facilitate optimal vein access and reduce discomfort.</p>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
+        <div class="rounded-circle bg-white p-2 text-danger shadow-xs">
+          <i class="bi bi-card-heading fs-5"></i>
+        </div>
+        <div>
+          <div class="fw-bold text-navy small">Identification &amp; Order Forms</div>
+          <p class="text-muted small mb-0">Please present your government-issued ID card and physician lab requisition upon arrival at the collection suite.</p>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-start gap-3">
+        <div class="rounded-circle bg-white p-2 text-teal shadow-xs">
+          <i class="bi bi-file-earmark-medical fs-5"></i>
+        </div>
+        <div>
+          <div class="fw-bold text-navy small">Report Delivery Timeline</div>
+          <p class="text-muted small mb-0">Standard hematology panels are available in 12-24 hours. Specialized inflammatory assays are processed within 24-48 hours.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Existing Bookings & History Tables -->
+  <div class="col-12">
+    <div class="portal-card">
+      <h3 class="h6 fw-bold text-navy mb-3 d-flex align-items-center gap-2">
+        <i class="bi bi-clock-history text-primary"></i>
+        Your Scheduled Blood Collection Requisitions
+      </h3>
+
+      {% if upcoming_bookings %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-4">
+            <thead class="table-light">
+              <tr class="small text-muted">
+                <th>Booking ID</th>
+                <th>Patient Name</th>
+                <th>Collection Date</th>
+                <th>Time Slot</th>
+                <th>Designated Location</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for b in upcoming_bookings %}
+                <tr>
+                  <td><span class="fw-bold text-navy small">BLD-{{ b.id|stringformat:"04d" }}</span></td>
+                  <td><span class="fw-semibold text-navy">{{ b.patient_name }}</span></td>
+                  <td>{{ b.collection_date|date:"l, M d, Y" }}</td>
+                  <td><span class="badge bg-light text-navy border">{{ b.time_slot }}</span></td>
+                  <td class="small text-muted">{{ b.get_collection_location_display }}</td>
+                  <td>
+                    <span class="badge {% if b.status == 'confirmed' %}bg-success-subtle text-success{% else %}bg-warning-subtle text-warning{% endif %}">
+                      {{ b.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    {% if b.can_cancel %}
+                      <form method="post" action="{% url 'blood_collection:cancel' b.id %}" onsubmit="return confirm('Cancel this collection booking?');" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" style="font-size: 0.75rem;">
+                          Cancel
+                        </button>
+                      </form>
+                    {% else %}
+                      <span class="text-muted small">—</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="portal-empty-state py-4 my-2">
+          <div class="portal-empty-icon"><i class="bi bi-droplet-slash"></i></div>
+          <p class="text-muted small mb-0">No active blood collection bookings. Use the requisition form above to schedule a collection.</p>
+        </div>
+      {% endif %}
+
+      <!-- Past Collections History -->
+      {% if past_bookings %}
+        <div class="border-top pt-3 mt-4">
+          <h4 class="h6 fw-semibold text-muted mb-2">Past Collection Requisitions</h4>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle text-muted small">
+              <tbody>
+                {% for pb in past_bookings %}
+                  <tr>
+                    <td>BLD-{{ pb.id|stringformat:"04d" }}</td>
+                    <td>{{ pb.patient_name }}</td>
+                    <td>{{ pb.collection_date|date:"M d, Y" }}</td>
+                    <td>{{ pb.get_status_display }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

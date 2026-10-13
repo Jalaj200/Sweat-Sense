@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In — Sweat Sense{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <!-- Main Authentication Form Column -->
+  <main class="auth-main">
+    <div class="auth-box">
+      <!-- Brand Header -->
+      <header class="auth-header">
+        <a href="{% url 'root' %}" class="ss-brand" aria-label="Sweat Sense Home">
+          <div class="ss-brand-mark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="#ffffff"/>
+              <path d="M8.5 14.5c.9-1.2 2-1.7 3.5-1.7s2.6.5 3.5 1.7" stroke="#102A43" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M10 17.5c.6-.7 1.2-.9 2-.9s1.4.2 2 .9" stroke="#102A43" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="12" cy="10.5" r="1.4" fill="#102A43"/>
+            </svg>
+          </div>
+          <div class="ss-brand-text">
+            <span class="ss-brand-name">Sweat Sense</span>
+            <span class="ss-brand-tagline">Sensing Sweat. Exploring Health.</span>
+          </div>
+        </a>
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Continue exploring sweat-based biosensing.</p>
+      </header>
+
+      <!-- Django Messages Notification Area -->
+      {% if messages %}
+        <div class="messages-container mb-3" role="region" aria-label="Notifications">
+          {% for message in messages %}
+            <div class="ss-alert ss-alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+              <span class="ss-alert-icon">
+                {% if message.tags == 'success' %}
+                  <i class="bi bi-check-circle-fill"></i>
+                {% elif message.tags == 'danger' or message.tags == 'error' %}
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                {% elif message.tags == 'warning' %}
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                {% else %}
+                  <i class="bi bi-info-circle-fill"></i>
+                {% endif %}
+              </span>
+              <div class="ss-alert-content">{{ message }}</div>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Form General Non-Field Errors -->
+      {% if form.non_field_errors %}
+        <div class="ss-alert ss-alert-danger" role="alert">
+          <span class="ss-alert-icon"><i class="bi bi-exclamation-octagon-fill"></i></span>
+          <div class="ss-alert-content">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Login Form -->
+      <form method="post" action="{% url 'accounts:login' %}" class="auth-form" novalidate id="loginForm">
+        {% csrf_token %}
+
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <!-- Username or Email Field -->
+        <div class="mb-3">
+          <label for="{{ form.username.id_for_label }}" class="form-label">
+            Email or Username
+          </label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted" id="username-addon">
+              <i class="bi bi-person"></i>
+            </span>
+            <input
+              type="text"
+              name="{{ form.username.name }}"
+              id="{{ form.username.id_for_label }}"
+              class="form-control border-start-0 {% if form.username.errors %}is-invalid{% endif %}"
+              placeholder="name@example.com or username"
+              value="{{ form.username.value|default_if_none:'' }}"
+              required
+              autocomplete="username"
+              autofocus
+              aria-describedby="username-addon"
+            >
+          </div>
+          {% if form.username.errors %}
+            {% for error in form.username.errors %}
+              <div class="field-error-message">
+                <i class="bi bi-exclamation-circle"></i> {{ error }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Password Field with Toggle -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label for="{{ form.password.id_for_label }}" class="form-label mb-0">
+              Password
+            </label>
+            <a href="#forgotPasswordModal" data-bs-toggle="modal" class="forgot-link" tabindex="0">
+              Forgot password?
+            </a>
+          </div>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted" id="password-addon">
+              <i class="bi bi-lock"></i>
+            </span>
+            <input
+              type="password"
+              name="{{ form.password.name }}"
+              id="{{ form.password.id_for_label }}"
+              class="form-control border-start-0 {% if form.password.errors %}is-invalid{% endif %}"
+              placeholder="Enter your password"
+              required
+              autocomplete="current-password"
+              aria-describedby="password-addon"
+            >
+            <button
+              type="button"
+              class="password-toggle-btn"
+              data-target="{{ form.password.id_for_label }}"
+              aria-label="Show password"
+              title="Show password"
+            >
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+          {% if form.password.errors %}
+            {% for error in form.password.errors %}
+              <div class="field-error-message">
+                <i class="bi bi-exclamation-circle"></i> {{ error }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="auth-options">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              name="{{ form.remember_me.name }}"
+              id="{{ form.remember_me.id_for_label }}"
+              class="form-check-input"
+              {% if form.remember_me.value %}checked{% endif %}
+            >
+            <label class="form-check-label" for="{{ form.remember_me.id_for_label }}">
+              Remember me
+            </label>
+          </div>
+        </div>
+
+        <!-- Sign In Button -->
+        <button type="submit" class="btn btn-primary-ss auth-submit-btn" id="loginSubmitBtn" data-loading-text="Signing in...">
+          <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          <span class="btn-text">Sign In</span>
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </form>
+
+      <!-- Auth Footer: Link to Signup -->
+      <footer class="auth-footer">
+        <p class="mb-0">
+          Don't have an account?
+          <a href="{% url 'accounts:signup' %}" class="ms-1">Create an account</a>
+        </p>
+      </footer>
+    </div>
+  </main>
+
+  <!-- Side Showcase Panel (Biomedical Research Focus) -->
+  <aside class="auth-showcase d-none d-lg-flex" aria-label="Sweat Sense Research Highlights">
+    <div class="showcase-header">
+      <div class="showcase-status">
+        <span class="pulse-dot"></span>
+        <span>Sweat Sense Research Hub • Active</span>
+      </div>
+    </div>
+
+    <div class="showcase-body">
+      <h2 class="showcase-title">Pioneering sweat-based biosensing research.</h2>
+      <p class="showcase-desc">
+        Investigating non-invasive C-reactive protein (CRP) quantification through wearable biosensors, microfluidic sampling, and molecular recognition science.
+      </p>
+
+      <div class="showcase-features">
+        <div class="showcase-feature-item">
+          <div class="showcase-icon-box">
+            <i class="bi bi-droplet-half"></i>
+          </div>
+          <div class="showcase-feature-text">
+            <h4>Eccrine Biofluid Sampling</h4>
+            <p>Evaluating sweat collection mechanics, matrix variance, and capillary flow dynamics.</p>
+          </div>
+        </div>
+
+        <div class="showcase-feature-item">
+          <div class="showcase-icon-box">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <div class="showcase-feature-text">
+            <h4>CRP Biomarker Recognition</h4>
+            <p>Functionalized transducer surfaces engineered for selective acute-phase protein interaction.</p>
+          </div>
+        </div>
+
+        <div class="showcase-feature-item">
+          <div class="showcase-icon-box">
+            <i class="bi bi-database-check"></i>
+          </div>
+          <div class="showcase-feature-text">
+            <h4>Rigorous Data Governance</h4>
+            <p>Secure session tokens, cryptographic hashing, and ethical biomedical data practices.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-footer">
+      <span>Sweat Sense Platform © 2026</span>
+      <span>Non-Clinical Research Platform</span>
+    </div>
+  </aside>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: var(--ss-radius-lg);">
+      <div class="modal-header border-bottom-0 pb-0">
+        <h5 class="modal-title fw-bold" id="forgotPasswordModalLabel">Reset Your Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4">
+        <p class="text-muted mb-3">
+          Password recovery for researcher accounts is coordinated through institutional credentials or your designated research lead.
+        </p>
+        <div class="p-3 bg-light rounded-3 border">
+          <p class="small text-secondary mb-1"><strong>Academic assistance:</strong></p>
+          <p class="small text-secondary mb-0">Please contact the research portal administrator at <a href="mailto:support@sweatsense.org">support@sweatsense.org</a> to verify and update your credentials.</p>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 pt-0">
+        <button type="button" class="btn btn-primary-ss" data-bs-dismiss="modal">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
