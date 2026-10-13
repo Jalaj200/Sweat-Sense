@@ -47,3 +47,5 @@ $RECYCLE.BIN/
 # Temporary files and logs
 *.log
 scratch/
+migrate_to_mysql.py
+sqlite_dump.json
