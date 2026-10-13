@@ -11,6 +11,13 @@ from django.contrib.messages import constants as messages_constants
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Automatically load environment variables from .env file if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / '.env')
+except ImportError:
+    pass
+
 # Quick-start development settings - unsuitable for production
 # In production, set DJANGO_SECRET_KEY as an environment variable
 SECRET_KEY = os.environ.get(
