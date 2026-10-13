@@ -41,6 +41,7 @@ else:
         'localhost',
         'testserver',
         'sweat-sense.vercel.app',
+        'sweat-sense-a6cl.vercel.app',
         '.vercel.app',
     ]
 
@@ -51,6 +52,7 @@ if csrf_trusted_origins_env:
 else:
     CSRF_TRUSTED_ORIGINS = [
         'https://sweat-sense.vercel.app',
+        'https://sweat-sense-a6cl.vercel.app',
         'https://*.vercel.app',
         'http://127.0.0.1:8000',
         'http://localhost:8000',
