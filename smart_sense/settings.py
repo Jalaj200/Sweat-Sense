@@ -100,15 +100,50 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smart_sense.wsgi.application'
 
-# Database Configuration (Active Backend: MySQL)
+# Database Configuration (Active Backend: MySQL / TiDB Cloud)
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-# Reads MySQL connection parameters from:
-# 1. DATABASE_URL (e.g. mysql://username:password@hostname:3306/dbname?charset=utf8mb4)
-# 2. Individual MySQL environment variables (MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_PORT)
-DATABASE_URL = os.environ.get('DATABASE_URL')
+MYSQL_HOST = os.environ.get('MYSQL_HOST')
+MYSQL_PORT = os.environ.get('MYSQL_PORT', '4000')
+MYSQL_USER = os.environ.get('MYSQL_USER')
+MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
 MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', os.environ.get('DB_NAME'))
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
-if DATABASE_URL:
+# TLS / SSL configuration for TiDB Cloud and managed MySQL
+try:
+    import certifi
+    default_ca = certifi.where()
+except ImportError:
+    default_ca = None
+
+mysql_ssl_ca = os.environ.get('MYSQL_SSL_CA', default_ca)
+mysql_options = {
+    'charset': 'utf8mb4',
+    'init_command': "SET sql_mode='STRICT_TRANS_TABLES', default_storage_engine=INNODB",
+}
+if mysql_ssl_ca:
+    mysql_options['ssl'] = {'ca': mysql_ssl_ca}
+
+if MYSQL_HOST and MYSQL_USER and MYSQL_DATABASE:
+    try:
+        port_num = int(MYSQL_PORT)
+    except (ValueError, TypeError):
+        port_num = 4000
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': MYSQL_DATABASE,
+            'USER': MYSQL_USER,
+            'PASSWORD': MYSQL_PASSWORD,
+            'HOST': MYSQL_HOST,
+            'PORT': port_num,
+            'OPTIONS': mysql_options,
+            'CONN_MAX_AGE': 600,
+        }
+    }
+
+elif DATABASE_URL and '://' in DATABASE_URL:
     try:
         import dj_database_url
     except ImportError as exc:
@@ -122,44 +157,15 @@ if DATABASE_URL:
         conn_max_age=600,
         conn_health_checks=True,
     )
-    # Ensure MySQL charset and sql_mode options
     if 'mysql' in db_config.get('ENGINE', ''):
         db_config.setdefault('OPTIONS', {})
         db_config['OPTIONS'].setdefault('charset', 'utf8mb4')
         db_config['OPTIONS'].setdefault('init_command', "SET sql_mode='STRICT_TRANS_TABLES'")
+        if mysql_ssl_ca and 'ssl' not in db_config['OPTIONS']:
+            db_config['OPTIONS']['ssl'] = {'ca': mysql_ssl_ca}
 
     DATABASES = {'default': db_config}
 
-elif MYSQL_DATABASE:
-    mysql_user = os.environ.get('MYSQL_USER', os.environ.get('DB_USER', 'root'))
-    mysql_password = os.environ.get('MYSQL_PASSWORD', os.environ.get('DB_PASSWORD', ''))
-    mysql_host = os.environ.get('MYSQL_HOST', os.environ.get('DB_HOST', '127.0.0.1'))
-    mysql_port = os.environ.get('MYSQL_PORT', os.environ.get('DB_PORT', '3306'))
-
-    mysql_options = {
-        'charset': 'utf8mb4',
-        'init_command': "SET sql_mode='STRICT_TRANS_TABLES', default_storage_engine=INNODB",
-    }
-
-    # SSL configuration for cloud MySQL providers (Aiven, TiDB, PlanetScale, AWS RDS)
-    mysql_ssl_ca = os.environ.get('MYSQL_SSL_CA')
-    if mysql_ssl_ca:
-        mysql_options['ssl'] = {'ca': mysql_ssl_ca}
-    elif os.environ.get('MYSQL_SSL', 'false').lower() in ('true', '1', 'required'):
-        mysql_options['ssl'] = {'ssl_mode': 'REQUIRED'}
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': MYSQL_DATABASE,
-            'USER': mysql_user,
-            'PASSWORD': mysql_password,
-            'HOST': mysql_host,
-            'PORT': mysql_port,
-            'OPTIONS': mysql_options,
-            'CONN_MAX_AGE': 600,
-        }
-    }
 elif os.environ.get('USE_SQLITE_BACKUP') == '1':
     # Emergency local recovery/inspection against original SQLite backup
     DATABASES = {
@@ -168,12 +174,13 @@ elif os.environ.get('USE_SQLITE_BACKUP') == '1':
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
 else:
-    # Fail fast: MySQL configuration is strictly required
+    # Fail fast: Prompt for missing MySQL / TiDB Cloud parameters
     raise ImproperlyConfigured(
-        "MySQL configuration is required. Please set DATABASE_URL (e.g. mysql://user:password@host:3306/dbname) "
-        "or set MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST in your environment variables. "
-        "SQLite is not permitted in the active application configuration."
+        "MySQL configuration is incomplete. Please define MYSQL_HOST, MYSQL_PORT, MYSQL_USER, "
+        "MYSQL_PASSWORD, and MYSQL_DATABASE in your .env file. "
+        "SQLite fallback is disabled."
     )
 
 # Authentication Backends
