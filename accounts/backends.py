@@ -1,5 +1,5 @@
 """
-Custom Authentication Backend for Sweat Sense.
+Custom Authentication Backend for CRPify.
 Allows users to sign in using either their username or email address.
 """
 

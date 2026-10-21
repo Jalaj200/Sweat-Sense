@@ -1,5 +1,5 @@
 """
-Models for Doctor Consultation module in Sweat Sense Patient Portal.
+Models for Doctor Consultation module in CRPify Patient Portal.
 """
 
 from django.db import models
@@ -24,7 +24,7 @@ class Doctor(models.Model):
     specialty = models.CharField(max_length=120, help_text="e.g. Internal Medicine & Inflammatory Disorders")
     consultation_mode = models.CharField(max_length=20, choices=MODE_CHOICES, default='both')
     experience_years = models.PositiveIntegerField(default=10)
-    hospital_affiliation = models.CharField(max_length=200, blank=True, default="Sweat Sense Partner Clinic")
+    hospital_affiliation = models.CharField(max_length=200, blank=True, default="CRPify Partner Clinic")
     available_days = models.CharField(max_length=100, default="Mon - Fri")
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

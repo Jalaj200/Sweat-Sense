@@ -1,5 +1,5 @@
 """
-Views for dashboard and history modules in Sweat Sense Patient Portal.
+Views for dashboard and history modules in CRPify Patient Portal.
 """
 
 from django.shortcuts import render
@@ -44,7 +44,7 @@ def home_view(request):
     report_count = MedicalReport.objects.filter(patient=patient).count()
 
     context = {
-        'page_title': 'Patient Portal Home — Sweat Sense',
+        'page_title': 'Patient Portal Home — CRPify',
         'active_section': 'home',
         'display_name': display_name,
         'user': patient,
@@ -96,13 +96,22 @@ def history_view(request):
     # Map Blood Collections to timeline items
     if category_filter in ['all', 'blood_collection']:
         for b in blood_qs:
+            if getattr(b, 'collection_method', '') == 'HOME':
+                method_label = "Home Blood Collection"
+                icon_name = "bi-house-heart"
+                subtitle_text = f"Home Phlebotomy: {b.full_address}"
+            else:
+                method_label = "Visit Diagnostic Center"
+                icon_name = "bi-hospital"
+                subtitle_text = f"Center: {b.get_collection_location_display()}"
+
             timeline_items.append({
                 'category': 'blood_collection',
-                'category_label': 'Blood Collection',
-                'icon': 'bi-droplet-half',
+                'category_label': f"Blood Collection ({method_label})",
+                'icon': icon_name,
                 'icon_bg': 'bg-danger-subtle text-danger',
                 'title': f"Phlebotomy Collection for {b.patient_name}",
-                'subtitle': f"Location: {b.get_collection_location_display() if hasattr(b, 'get_collection_location_display') else b.collection_location}",
+                'subtitle': subtitle_text,
                 'date': b.collection_date,
                 'created_at': b.created_at,
                 'time_slot': b.time_slot,
@@ -135,7 +144,7 @@ def history_view(request):
     timeline_items.sort(key=lambda x: (x['date'], x['created_at']), reverse=True)
 
     context = {
-        'page_title': 'Healthcare Activity History — Sweat Sense',
+        'page_title': 'Healthcare Activity History — CRPify',
         'active_section': 'history',
         'current_filter': category_filter,
         'timeline_items': timeline_items,

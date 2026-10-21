@@ -43,7 +43,7 @@ def report_list_view(request):
     categories = MedicalReport.CATEGORY_CHOICES
 
     context = {
-        'page_title': 'Medical & Laboratory Reports — Sweat Sense',
+        'page_title': 'Medical & Laboratory Reports — CRPify',
         'active_section': 'reports',
         'reports': reports_qs,
         'categories': categories,
@@ -72,7 +72,7 @@ def secure_view_report_view(request, pk):
 
     # If PDF is not uploaded yet, render a structured clinical summary page
     context = {
-        'page_title': f'{report.title} — Sweat Sense',
+        'page_title': f'{report.title} — CRPify',
         'report': report,
     }
     return render(request, 'reports/report_detail.html', context)
@@ -91,7 +91,7 @@ def secure_download_report_view(request, pk):
         raise PermissionDenied("You do not have authorization to download this medical report.")
 
     if report.pdf_file and report.pdf_file.storage.exists(report.pdf_file.name):
-        filename = f"SweatSense_Report_{report.id}_{report.report_date}.pdf"
+        filename = f"CRPify_Report_{report.id}_{report.report_date}.pdf"
         return FileResponse(report.pdf_file.open('rb'), as_attachment=True, filename=filename)
 
     messages.info(

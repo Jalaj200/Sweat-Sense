@@ -1,5 +1,5 @@
 /**
- * Sweat Sense — Patient Healthcare Portal JavaScript (portal.js)
+ * CRPify — Patient Healthcare Portal JavaScript (portal.js)
  * Implements mobile sidebar drawer toggle and client helpers.
  */
 

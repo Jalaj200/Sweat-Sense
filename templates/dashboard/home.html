@@ -1,7 +1,7 @@
 {% extends 'portal_base.html' %}
 {% load static %}
 
-{% block title %}Patient Portal Home — Sweat Sense{% endblock %}
+{% block title %}Patient Portal Home — CRPify{% endblock %}
 {% block section_title %}Patient Home Dashboard{% endblock %}
 
 {% block portal_content %}
@@ -13,7 +13,7 @@
         <div class="col-lg-8">
           <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-light text-primary small fw-semibold mb-3 border">
             <span class="pulse-dot"></span>
-            Sweat Sense Clinical Healthcare Portal
+            CRPify Clinical Healthcare Portal
           </div>
           <h2 class="display-6 fw-bold mb-2 text-navy" style="color: var(--portal-navy);">Welcome back, {{ display_name }}!</h2>
           <p class="lead mb-3" style="color: #486581; font-size: 1.05rem;">
@@ -58,7 +58,7 @@
         <div>
           <h3 class="h6 fw-bold mb-1" style="color: var(--portal-navy);">About C-Reactive Protein (CRP) &amp; Sweat Biosensing</h3>
           <p class="small text-muted mb-0">
-            C-reactive protein (CRP) is a biomarker associated with inflammation. Sweat Sense explores sweat-based CRP detection as a research direction. Clinical diagnostic decisions must always rely on validated blood tests and guidance from licensed healthcare practitioners.
+            C-reactive protein (CRP) is a biomarker associated with inflammation. CRPify explores sweat-based CRP detection as a research direction. Clinical diagnostic decisions must always rely on validated blood tests and guidance from licensed healthcare practitioners.
           </p>
         </div>
       </div>
@@ -186,12 +186,20 @@
           {% for booking in upcoming_blood_bookings %}
             <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center gap-3">
-                <div class="rounded-circle bg-danger-subtle p-2 text-danger">
-                  <i class="bi bi-droplet-half fs-5"></i>
+                <div class="rounded-circle {% if booking.is_home_collection %}bg-danger-subtle text-danger{% else %}bg-primary-subtle text-primary{% endif %} p-2">
+                  <i class="{% if booking.is_home_collection %}bi bi-house-heart{% else %}bi bi-hospital{% endif %} fs-5"></i>
                 </div>
                 <div>
                   <div class="fw-bold text-navy">Requisition for {{ booking.patient_name }}</div>
-                  <div class="small text-muted">Location: {{ booking.get_collection_location_display }}</div>
+                  <div class="small text-muted">
+                    {% if booking.is_home_collection %}
+                      <span class="badge bg-danger-subtle text-danger py-0 px-1 me-1">Home</span>
+                      <span>{{ booking.destination_summary }}</span>
+                    {% else %}
+                      <span class="badge bg-primary-subtle text-primary py-0 px-1 me-1">Center</span>
+                      <span>{{ booking.get_collection_location_display }}</span>
+                    {% endif %}
+                  </div>
                   <div class="small text-danger fw-medium">
                     <i class="bi bi-calendar-check me-1"></i> {{ booking.collection_date|date:"M d, Y" }} ({{ booking.time_slot }})
                   </div>

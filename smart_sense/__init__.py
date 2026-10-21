@@ -1,5 +1,5 @@
 """
-Sweat Sense Django Project Package Initialization.
+CRPify Django Project Package Initialization.
 Registers PyMySQL as MySQLdb for broad environment and serverless compatibility.
 """
 

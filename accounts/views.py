@@ -1,5 +1,5 @@
 """
-Views for Sweat Sense Authentication Module.
+Views for CRPify Authentication Module.
 Handles login, registration, logout, and authenticated redirects.
 """
 
@@ -59,7 +59,7 @@ def login_view(request):
     context = {
         'form': form,
         'next': redirect_to,
-        'page_title': 'Sign In — Sweat Sense',
+        'page_title': 'Sign In — CRPify',
     }
     return render(request, 'accounts/login.html', context)
 
@@ -92,7 +92,7 @@ def signup_view(request):
 
     context = {
         'form': form,
-        'page_title': 'Join Sweat Sense — Biomedical Research',
+        'page_title': 'Join CRPify — Biomedical Research',
     }
     return render(request, 'accounts/signup.html', context)
 
@@ -105,5 +105,5 @@ def logout_view(request):
     """
     if request.user.is_authenticated:
         logout(request)
-        messages.info(request, "You have been successfully signed out of Sweat Sense.")
+        messages.info(request, "You have been successfully signed out of CRPify.")
     return redirect('accounts:login')

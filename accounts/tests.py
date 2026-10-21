@@ -1,5 +1,5 @@
 """
-Comprehensive automated test suite for Sweat Sense Patient Healthcare Portal.
+Comprehensive automated test suite for CRPify Patient Healthcare Portal.
 Validates authentication, the five primary sections, bookings, authorization, and security.
 """
 
@@ -84,7 +84,7 @@ class PatientPortalRenderingTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'dashboard/home.html')
         self.assertContains(response, 'Welcome back, Jane Doe!')
-        self.assertContains(response, 'Sweat Sense')
+        self.assertContains(response, 'CRPify')
         self.assertContains(response, 'C-reactive protein (CRP) is a biomarker associated with inflammation.')
         self.assertContains(response, 'Doctor Consultation')
         self.assertContains(response, 'Blood Collection')
@@ -214,6 +214,7 @@ class BloodCollectionBookingTests(TestCase):
         self.client.force_login(self.patient)
 
     def test_blood_collection_booking_success(self):
+        """Diagnostic center visit booking backward compatibility."""
         future_date = timezone.now().date() + timedelta(days=1)
         response = self.client.post(reverse('blood_collection:list'), {
             'patient_name': 'Patient Two',
@@ -225,7 +226,126 @@ class BloodCollectionBookingTests(TestCase):
             'special_notes': 'Lipid and metabolic panel requested',
         }, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(BloodCollectionBooking.objects.filter(patient=self.patient).exists())
+        self.assertTrue(BloodCollectionBooking.objects.filter(patient=self.patient, collection_method=BloodCollectionBooking.METHOD_CENTER).exists())
+
+    def test_home_collection_booking_success(self):
+        """Home blood sample collection booking with address validation and serviceability."""
+        future_date = timezone.now().date() + timedelta(days=2)
+        response = self.client.post(reverse('blood_collection:list'), {
+            'collection_method': 'HOME',
+            'patient_name': 'Jane Doe',
+            'contact_number': '9876543210',
+            'collection_date': future_date.isoformat(),
+            'time_slot': '07:30 AM - 08:30 AM (Fasting Preferred)',
+            'house_number': 'Flat 402, Lotus Towers',
+            'street': 'Barakhamba Road',
+            'area': 'Connaught Place',
+            'city': 'New Delhi',
+            'state': 'Delhi',
+            'pin_code': '110001',
+            'contact_person': 'Jane Doe',
+            'contact_phone': '9876543210',
+            'landmark': 'Near Rajiv Chowk Metro',
+            'additional_directions': 'Tower B, 4th floor, buzzer on right',
+            'fasting_required': 'on',
+            'special_notes': 'Morning fasting CRP sample',
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        booking = BloodCollectionBooking.objects.filter(patient=self.patient, collection_method='HOME').first()
+        self.assertIsNotNone(booking)
+        self.assertTrue(booking.is_home_collection)
+        self.assertEqual(booking.pin_code, '110001')
+        self.assertEqual(booking.city, 'New Delhi')
+        self.assertIn('Flat 402', booking.full_address)
+        self.assertIn('Connaught Place', booking.full_address)
+        self.assertIn('110001', booking.full_address)
+
+    def test_home_collection_unserviceable_pincode_rejected(self):
+        """Reject unserviceable PIN codes with clear clinical feedback."""
+        future_date = timezone.now().date() + timedelta(days=2)
+        response = self.client.post(reverse('blood_collection:list'), {
+            'collection_method': 'HOME',
+            'patient_name': 'Jane Doe',
+            'contact_number': '9876543210',
+            'collection_date': future_date.isoformat(),
+            'time_slot': '07:30 AM - 08:30 AM (Fasting Preferred)',
+            'house_number': 'House 1',
+            'street': 'Remote Road',
+            'area': 'Remote Hills',
+            'city': 'Remote Town',
+            'state': 'Remote State',
+            'pin_code': '999999',
+            'contact_person': 'Jane Doe',
+            'contact_phone': '9876543210',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Home collection is currently not available in PIN code 999999')
+        self.assertFalse(BloodCollectionBooking.objects.filter(pin_code='999999').exists())
+
+    def test_home_collection_missing_address_fields(self):
+        """Enforce all required address components when Home Collection is chosen."""
+        future_date = timezone.now().date() + timedelta(days=2)
+        response = self.client.post(reverse('blood_collection:list'), {
+            'collection_method': 'HOME',
+            'patient_name': 'Jane Doe',
+            'contact_number': '9876543210',
+            'collection_date': future_date.isoformat(),
+            'time_slot': '07:30 AM - 08:30 AM (Fasting Preferred)',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'House / Flat / Building number is required')
+        self.assertContains(response, 'Street or Road address is required')
+        self.assertContains(response, 'Area or Locality is required')
+        self.assertContains(response, 'City is required')
+        self.assertContains(response, 'State is required')
+        self.assertContains(response, 'Six-digit postal PIN code is required')
+
+    def test_prevent_slot_collision_same_patient(self):
+        """Prevent same patient from double-booking same date and time slot."""
+        future_date = timezone.now().date() + timedelta(days=3)
+        slot = '10:00 AM - 11:00 AM'
+        # Create initial booking
+        BloodCollectionBooking.objects.create(
+            patient=self.patient,
+            patient_name='Jane Doe',
+            contact_number='9876543210',
+            collection_method='CENTER',
+            collection_location='lab_central',
+            collection_date=future_date,
+            time_slot=slot,
+            status='confirmed'
+        )
+        # Attempt to book another slot at same time
+        response = self.client.post(reverse('blood_collection:list'), {
+            'collection_method': 'CENTER',
+            'patient_name': 'Jane Doe',
+            'contact_number': '9876543210',
+            'collection_date': future_date.isoformat(),
+            'time_slot': slot,
+            'collection_location': 'lab_north',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'already have a blood sample collection booking scheduled for this date and time slot')
+
+    def test_check_pincode_api_endpoint(self):
+        """API endpoint /blood-collection/api/check-pincode/ validates serviceability."""
+        # Serviceable PIN
+        resp = self.client.get(reverse('blood_collection:check_pincode') + '?pincode=110001')
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertTrue(data['serviceable'])
+        self.assertEqual(data['pincode'], '110001')
+        self.assertEqual(data['city'], 'New Delhi')
+
+        # Unserviceable PIN
+        resp_unserviceable = self.client.get(reverse('blood_collection:check_pincode') + '?pincode=999999')
+        self.assertEqual(resp_unserviceable.status_code, 200)
+        data_unserviceable = resp_unserviceable.json()
+        self.assertFalse(data_unserviceable['serviceable'])
+
+        # Invalid format
+        resp_bad = self.client.get(reverse('blood_collection:check_pincode') + '?pincode=invalid')
+        self.assertEqual(resp_bad.status_code, 400)
 
     def test_reject_past_collection_date(self):
         past_date = timezone.now().date() - timedelta(days=2)
@@ -257,7 +377,7 @@ class ReportsAuthorizationTests(TestCase):
             patient=self.user_a,
             title='Serum CRP High-Sensitivity Immunoassay',
             category='inflammation',
-            issuing_lab='Sweat Sense Reference Lab',
+            issuing_lab='CRPify Reference Lab',
             report_date=timezone.now().date(),
             notes='Patient A confidential report'
         )

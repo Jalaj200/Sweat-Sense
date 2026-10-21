@@ -1,5 +1,5 @@
 """
-URL Configuration for Sweat Sense Patient Healthcare Portal.
+URL Configuration for CRPify Patient Healthcare Portal.
 Implements the exact five primary healthcare portal sections:
 1. /dashboard/        -> Home
 2. /consultation/     -> Doctor Consultation

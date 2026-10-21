@@ -1,5 +1,5 @@
 /**
- * Sweat Sense — Authentication & Biosensing UI JavaScript (auth.js)
+ * CRPify — Authentication & Biosensing UI JavaScript (auth.js)
  * Implements password toggling, real-time strength evaluation, confirmation matching,
  * and accessible form interactions.
  */

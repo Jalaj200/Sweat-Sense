@@ -1,7 +1,7 @@
 {% extends 'portal_base.html' %}
 {% load static %}
 
-{% block title %}{{ report.title }} — Sweat Sense Reports{% endblock %}
+{% block title %}{{ report.title }} — CRPify Reports{% endblock %}
 {% block section_title %}Report Document View{% endblock %}
 
 {% block portal_content %}
@@ -34,7 +34,7 @@
             </svg>
           </div>
           <div>
-            <div class="h5 fw-bold text-navy mb-0">Sweat Sense Clinical Reference Laboratory</div>
+            <div class="h5 fw-bold text-navy mb-0">CRPify Clinical Reference Laboratory</div>
             <div class="small text-muted">{{ report.issuing_lab }} • CLIA / CAP Accredited Diagnostic Center</div>
           </div>
         </div>
@@ -88,7 +88,7 @@
       <div class="row pt-4 border-top text-muted small">
         <div class="col-md-6">
           <div>Verified By: <strong>Authorized Laboratory Director</strong></div>
-          <div>Sweat Sense Quality Assurance Division</div>
+          <div>CRPify Quality Assurance Division</div>
         </div>
         <div class="col-md-6 text-md-end">
           <div>Record Verification Timestamp: {{ report.uploaded_at|date:"Y-m-d H:i:s" }} UTC</div>

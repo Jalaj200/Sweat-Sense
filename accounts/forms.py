@@ -1,5 +1,5 @@
 """
-Forms for Sweat Sense Authentication Module.
+Forms for CRPify Authentication Module.
 Provides robust server-side validation, password hashing, and user creation.
 """
 

@@ -1,7 +1,7 @@
 {% extends 'portal_base.html' %}
 {% load static %}
 
-{% block title %}Blood Collection Services — Sweat Sense{% endblock %}
+{% block title %}Blood Collection Services — CRPify{% endblock %}
 {% block section_title %}Blood Collection Services{% endblock %}
 
 {% block portal_content %}
@@ -11,16 +11,19 @@
     <div class="portal-card position-relative" style="background: linear-gradient(135deg, #FFFFFF 0%, #FFF5F5 100%); border-left: 5px solid #EF4444;">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
-          <span class="badge bg-danger-subtle text-danger fw-semibold mb-2 px-3 py-1">Clinical Phlebotomy Laboratory</span>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge bg-danger-subtle text-danger fw-semibold px-3 py-1">Certified Diagnostic Phlebotomy</span>
+            <span class="badge bg-success-subtle text-success fw-semibold px-2 py-1"><i class="bi bi-house-heart me-1"></i>Doorstep Collection Available</span>
+          </div>
           <h2 class="h4 fw-bold text-navy mb-1" style="color: var(--portal-navy);">Certified Blood Sample Collection</h2>
-          <p class="text-muted small mb-0" style="max-width: 680px;">
-            Schedule routine venous phlebotomy for complete blood counts, metabolic profiles, and quantitative serum inflammatory markers. 
-            <em>Note: Clinical blood collection is a certified diagnostic service, distinct from ongoing sweat-based CRP biosensing research.</em>
+          <p class="text-muted small mb-0" style="max-width: 720px;">
+            Schedule routine venous phlebotomy for complete blood counts, metabolic panels, and quantitative inflammatory biomarkers (hs-CRP).
+            Choose between <strong>Home Phlebotomy Dispatch</strong> directly to your residence or visit one of our <strong>Partner Diagnostic Suites</strong>.
           </p>
         </div>
         <div>
           <a href="#bookingFormCard" class="btn btn-primary-ss btn-sm" style="background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);">
-            <i class="bi bi-droplet-half me-1"></i> New Blood Requisition
+            <i class="bi bi-calendar-plus me-1"></i> New Blood Requisition
           </a>
         </div>
       </div>
@@ -30,16 +33,19 @@
   <!-- 2. Booking Scheduling Form & Guidelines (Side-by-side) -->
   <div class="col-lg-7" id="bookingFormCard">
     <div class="portal-card">
-      <h3 class="h6 fw-bold text-navy mb-3 d-flex align-items-center gap-2">
-        <i class="bi bi-calendar-plus text-danger"></i>
-        Schedule Blood Sample Collection
-      </h3>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="h6 fw-bold text-navy mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-calendar-plus text-danger"></i>
+          Schedule Blood Sample Collection
+        </h3>
+        <span class="badge bg-light text-muted border small">Step 1 of 1</span>
+      </div>
 
       <form method="post" action="{% url 'blood_collection:list' %}" novalidate id="bloodCollectionForm">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
-          <div class="ss-alert ss-alert-danger mb-3">
+          <div class="ss-alert ss-alert-danger mb-3" role="alert">
             <span class="ss-alert-icon"><i class="bi bi-exclamation-octagon-fill"></i></span>
             <div class="ss-alert-content">
               {% for err in form.non_field_errors %}
@@ -50,6 +56,74 @@
         {% endif %}
 
         <div class="row g-3">
+          <!-- 1. COLLECTION METHOD SELECTION (Top of Form) -->
+          <div class="col-12">
+            <label class="form-label fw-bold text-navy small mb-2 d-flex align-items-center justify-content-between">
+              <span>Collection Method <span class="text-danger">*</span></span>
+              <span class="text-muted fw-normal" style="font-size: 0.75rem;">Choose where your sample should be drawn</span>
+            </label>
+
+            <div class="row g-2" id="collectionMethodSelector">
+              <!-- Option 1: Home Blood Collection -->
+              <div class="col-md-6">
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="collection_method"
+                  id="method_home"
+                  value="HOME"
+                  {% if form.collection_method.value == 'HOME' or not form.collection_method.value %}checked{% endif %}
+                  autocomplete="off"
+                >
+                <label class="method-card w-100 p-3 rounded-3 border d-flex align-items-start gap-3 h-100 position-relative cursor-pointer" for="method_home" id="methodHomeLabel">
+                  <div class="method-icon-box rounded-circle p-2 bg-danger-subtle text-danger fs-4 flex-shrink-0">
+                    <i class="bi bi-house-heart"></i>
+                  </div>
+                  <div>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="fw-bold text-navy small">Home Blood Collection</div>
+                      <span class="badge bg-danger-subtle text-danger py-0 px-1" style="font-size: 0.65rem;">Doorstep</span>
+                    </div>
+                    <p class="text-muted small mb-0 mt-1" style="font-size: 0.75rem; line-height: 1.35;">
+                      Certified phlebotomist arrives at your home address with sterilized collection kit.
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Option 2: Visit Diagnostic Center -->
+              <div class="col-md-6">
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="collection_method"
+                  id="method_center"
+                  value="CENTER"
+                  {% if form.collection_method.value == 'CENTER' %}checked{% endif %}
+                  autocomplete="off"
+                >
+                <label class="method-card w-100 p-3 rounded-3 border d-flex align-items-start gap-3 h-100 position-relative cursor-pointer" for="method_center" id="methodCenterLabel">
+                  <div class="method-icon-box rounded-circle p-2 bg-primary-subtle text-primary fs-4 flex-shrink-0">
+                    <i class="bi bi-hospital"></i>
+                  </div>
+                  <div>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="fw-bold text-navy small">Visit Diagnostic Center</div>
+                      <span class="badge bg-primary-subtle text-primary py-0 px-1" style="font-size: 0.65rem;">Walk-In Suite</span>
+                    </div>
+                    <p class="text-muted small mb-0 mt-1" style="font-size: 0.75rem; line-height: 1.35;">
+                      Walk in to one of our certified clinical pathology suites at your preferred time.
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+            {% if form.collection_method.errors %}
+              <div class="field-error-message mt-1"><i class="bi bi-exclamation-circle"></i> {{ form.collection_method.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- 2. BASELINE PATIENT & CONTACT INFORMATION -->
           <!-- Patient Name -->
           <div class="col-md-6">
             <label for="{{ form.patient_name.id_for_label }}" class="form-label fw-semibold small text-navy">
@@ -64,7 +138,7 @@
           <!-- Contact Number -->
           <div class="col-md-6">
             <label for="{{ form.contact_number.id_for_label }}" class="form-label fw-semibold small text-navy">
-              Contact Telephone Number <span class="text-danger">*</span>
+              Patient Contact Phone <span class="text-danger">*</span>
             </label>
             {{ form.contact_number }}
             {% if form.contact_number.errors %}
@@ -78,7 +152,7 @@
               Requested Collection Date <span class="text-danger">*</span>
             </label>
             {{ form.collection_date }}
-            <div class="form-text" style="font-size: 0.75rem;">Select today or an upcoming collection date.</div>
+            <div class="form-text" style="font-size: 0.75rem;">Select today or an upcoming date.</div>
             {% if form.collection_date.errors %}
               <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.collection_date.errors.0 }}</div>
             {% endif %}
@@ -95,26 +169,189 @@
             {% endif %}
           </div>
 
-          <!-- Collection Location Selection -->
-          <div class="col-12">
-            <label for="{{ form.collection_location.id_for_label }}" class="form-label fw-semibold small text-navy">
-              Designated Collection Center / Location <span class="text-danger">*</span>
-            </label>
-            {{ form.collection_location }}
-            {% if form.collection_location.errors %}
-              <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.collection_location.errors.0 }}</div>
-            {% endif %}
+          <!-- 3A. CONDITIONAL HOME ADDRESS SECTION -->
+          <div class="col-12" id="homeAddressSection" style="display: none;">
+            <div class="p-3 p-md-4 rounded-3 border bg-light bg-opacity-75" style="border-left: 4px solid #EF4444 !important;">
+              <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                <div class="fw-bold text-navy small d-flex align-items-center gap-2">
+                  <i class="bi bi-geo-alt-fill text-danger fs-5"></i>
+                  Home Collection Address &amp; Phlebotomist Dispatch
+                </div>
+                <span class="badge bg-white text-muted border small" style="font-size: 0.7rem;">Verified Dispatch</span>
+              </div>
+
+              <div class="row g-2 g-md-3">
+                <!-- House / Flat / Building -->
+                <div class="col-md-6">
+                  <label for="{{ form.house_number.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    House / Flat / Building No. <span class="text-danger">*</span>
+                  </label>
+                  {{ form.house_number }}
+                  {% if form.house_number.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.house_number.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- Street / Road -->
+                <div class="col-md-6">
+                  <label for="{{ form.street.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    Street / Road / Lane <span class="text-danger">*</span>
+                  </label>
+                  {{ form.street }}
+                  {% if form.street.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.street.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- Area / Locality -->
+                <div class="col-md-6">
+                  <label for="{{ form.area.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    Area / Locality / Sector <span class="text-danger">*</span>
+                  </label>
+                  {{ form.area }}
+                  {% if form.area.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.area.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- Landmark (Optional) -->
+                <div class="col-md-6">
+                  <label for="{{ form.landmark.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    Nearby Landmark <span class="text-muted fw-normal">(Optional)</span>
+                  </label>
+                  {{ form.landmark }}
+                  {% if form.landmark.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.landmark.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- PIN Code with Instant Coverage Check -->
+                <div class="col-md-4">
+                  <label for="{{ form.pin_code.id_for_label }}" class="form-label fw-semibold small text-navy mb-1 d-flex justify-content-between">
+                    <span>Six-digit PIN Code <span class="text-danger">*</span></span>
+                    <span id="pincodeCheckSpinner" class="spinner-border spinner-border-sm text-primary d-none" role="status"></span>
+                  </label>
+                  {{ form.pin_code }}
+                  <div id="pincodeCheckFeedback" class="small mt-1" style="font-size: 0.75rem;"></div>
+                  {% if form.pin_code.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.pin_code.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- City -->
+                <div class="col-md-4">
+                  <label for="{{ form.city.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    City <span class="text-danger">*</span>
+                  </label>
+                  {{ form.city }}
+                  {% if form.city.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.city.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- State -->
+                <div class="col-md-4">
+                  <label for="{{ form.state.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    State <span class="text-danger">*</span>
+                  </label>
+                  {{ form.state }}
+                  {% if form.state.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.state.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- Contact Person Name -->
+                <div class="col-md-6">
+                  <label for="{{ form.contact_person.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    Contact Person Name <span class="text-danger">*</span>
+                  </label>
+                  {{ form.contact_person }}
+                  <div class="form-text" style="font-size: 0.72rem;">Person available at the address during phlebotomist visit.</div>
+                  {% if form.contact_person.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.contact_person.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- Contact Phone -->
+                <div class="col-md-6">
+                  <label for="{{ form.contact_phone.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    Contact Phone for Phlebotomist <span class="text-danger">*</span>
+                  </label>
+                  {{ form.contact_phone }}
+                  <div class="form-text" style="font-size: 0.72rem;">Phlebotomist calls this number prior to arrival.</div>
+                  {% if form.contact_phone.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.contact_phone.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <!-- Additional Directions -->
+                <div class="col-12">
+                  <label for="{{ form.additional_directions.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                    Additional Directions or Building Entry Notes <span class="text-muted fw-normal">(Optional)</span>
+                  </label>
+                  {{ form.additional_directions }}
+                  {% if form.additional_directions.errors %}
+                    <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.additional_directions.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           </div>
 
+          <!-- 3B. CONDITIONAL DIAGNOSTIC CENTER SECTION -->
+          <div class="col-12" id="centerSelectionSection" style="display: none;">
+            <div class="p-3 p-md-4 rounded-3 border bg-light bg-opacity-75" style="border-left: 4px solid #1677FF !important;">
+              <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                <div class="fw-bold text-navy small d-flex align-items-center gap-2">
+                  <i class="bi bi-hospital text-primary fs-5"></i>
+                  Designated Diagnostic Pathology Suite
+                </div>
+                <span class="badge bg-white text-muted border small" style="font-size: 0.7rem;">Accredited Suite</span>
+              </div>
+
+              <!-- Collection Location Dropdown -->
+              <div class="mb-3">
+                <label for="{{ form.collection_location.id_for_label }}" class="form-label fw-semibold small text-navy mb-1">
+                  Select Certified Pathology Center <span class="text-danger">*</span>
+                </label>
+                {{ form.collection_location }}
+                {% if form.collection_location.errors %}
+                  <div class="field-error-message"><i class="bi bi-exclamation-circle"></i> {{ form.collection_location.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Center Information Cards -->
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <div class="p-3 bg-white rounded border small">
+                    <div class="fw-bold text-navy mb-1"><i class="bi bi-geo-alt text-primary me-1"></i>Central Lab (Suite 201)</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">
+                      CLIA &amp; CAP Accredited • 7:00 AM – 7:00 PM • Free patient parking &amp; ramp access.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="p-3 bg-white rounded border small">
+                    <div class="fw-bold text-navy mb-1"><i class="bi bi-geo-alt text-primary me-1"></i>North Pathology Wing</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">
+                      Rapid Inflammatory Analysis • 7:30 AM – 5:30 PM • Metro transit connected.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. FASTING PROTOCOL & SPECIAL NOTES -->
           <!-- Fasting Checkbox -->
           <div class="col-12">
             <div class="form-check p-3 bg-light rounded border">
               {{ form.fasting_required }}
               <label class="form-check-label small fw-semibold text-navy ms-1" for="{{ form.fasting_required.id_for_label }}">
-                Fasting Protocol Required (Check if fasting panels e.g., Lipids, Blood Glucose, CRP are requested)
+                Fasting Protocol Required (Recommended for Lipid, Glucose, and High-Sensitivity CRP Panels)
               </label>
               <div class="form-text ms-4" style="font-size: 0.75rem;">
-                Requires no caloric intake for 8-10 hours prior to phlebotomy. Water consumption is encouraged.
+                Requires no caloric intake for 8-10 hours prior to blood draw. Drinking plain water is permitted and encouraged.
               </div>
             </div>
           </div>
@@ -122,7 +359,7 @@
           <!-- Special Notes -->
           <div class="col-12">
             <label for="{{ form.special_notes.id_for_label }}" class="form-label fw-semibold small text-navy">
-              Special Instructions or Test Requisitions (Optional)
+              Special Instructions, Doctor Requisitions, or Allergies (Optional)
             </label>
             {{ form.special_notes }}
             {% if form.special_notes.errors %}
@@ -130,11 +367,43 @@
             {% endif %}
           </div>
 
-          <!-- Submit Button -->
-          <div class="col-12 mt-4">
-            <button type="submit" class="btn btn-primary-ss w-100" style="background: linear-gradient(135deg, #102A43 0%, #1677FF 100%);">
-              <i class="bi bi-calendar-check me-2"></i> Submit Blood Collection Booking
+          <!-- 5. DYNAMIC REQUISITION SUMMARY CARD (Before Submission) -->
+          <div class="col-12">
+            <div class="p-3 rounded-3 border bg-white shadow-xs" id="bookingSummaryCard">
+              <div class="small fw-bold text-navy mb-2 d-flex align-items-center gap-2">
+                <i class="bi bi-card-checklist text-primary"></i>
+                Requisition Summary Preview
+              </div>
+              <div class="row g-2 small text-muted">
+                <div class="col-sm-6">
+                  <span class="d-block text-secondary" style="font-size: 0.7rem;">COLLECTION TYPE:</span>
+                  <span class="fw-semibold text-navy" id="summaryMethodText">Home Blood Sample Collection</span>
+                </div>
+                <div class="col-sm-6">
+                  <span class="d-block text-secondary" style="font-size: 0.7rem;">DISPATCH TARGET / LOCATION:</span>
+                  <span class="fw-semibold text-navy" id="summaryLocationText">Address entered above</span>
+                </div>
+                <div class="col-sm-6">
+                  <span class="d-block text-secondary" style="font-size: 0.7rem;">DATE &amp; TIME SLOT:</span>
+                  <span class="fw-semibold text-navy" id="summaryDateTimeText">Select date &amp; time</span>
+                </div>
+                <div class="col-sm-6">
+                  <span class="d-block text-secondary" style="font-size: 0.7rem;">FASTING PROTOCOL:</span>
+                  <span class="fw-semibold text-danger" id="summaryFastingText">8-10h Fasting Recommended</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Submit Button -->
+          <div class="col-12 mt-2">
+            <button type="submit" class="btn btn-primary-ss w-100 py-2 fs-6" id="submitBookingBtn" style="background: linear-gradient(135deg, #102A43 0%, #1677FF 100%);">
+              <i class="bi bi-calendar-check me-2"></i> Confirm &amp; Submit Blood Collection Booking
             </button>
+            <p class="text-muted text-center mt-2 mb-0" style="font-size: 0.75rem;">
+              <i class="bi bi-shield-check text-success me-1"></i>
+              Your booking is verified and scheduled directly against CRPify certified clinical reference workflows.
+            </p>
           </div>
         </div>
       </form>
@@ -143,10 +412,45 @@
 
   <!-- Phlebotomy Preparation Guidelines -->
   <div class="col-lg-5">
-    <div class="portal-card bg-light border mb-4">
+    <!-- Home Collection Availability Card -->
+    <div class="portal-card bg-white border mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+        <h3 class="h6 fw-bold mb-0 text-navy d-flex align-items-center gap-2">
+          <i class="bi bi-house-check text-danger"></i>
+          Home Collection Availability
+        </h3>
+        <span class="badge bg-success-subtle text-success py-1 px-2" style="font-size: 0.75rem;">Active Coverage</span>
+      </div>
+
+      <p class="text-muted small mb-3">
+        Doorstep phlebotomy service is currently active across <strong>{{ serviceable_count }}+ major postal areas</strong>. Certified phlebotomists follow strict cold-chain sample preservation protocols.
+      </p>
+
+      <div class="p-3 bg-light rounded-3 border mb-3">
+        <div class="fw-bold text-navy small mb-1">Supported Metro Sample Zones:</div>
+        <div class="d-flex flex-wrap gap-1">
+          {% for p in default_serviceable_pincodes %}
+            <span class="badge bg-white text-navy border font-monospace" style="font-size: 0.72rem;">
+              {{ p.pincode }} ({{ p.city }})
+            </span>
+          {% endfor %}
+        </div>
+        <div class="text-muted mt-2" style="font-size: 0.72rem;">
+          Enter your 6-digit PIN code to check instant live coverage.
+        </div>
+      </div>
+
+      <div class="small text-muted">
+        <i class="bi bi-info-circle text-primary me-1"></i>
+        If your address falls outside current doorstep coverage, you can conveniently book a scheduled visit to our central or regional pathology suites.
+      </div>
+    </div>
+
+    <!-- Preparation Advice Card -->
+    <div class="portal-card bg-light border">
       <h3 class="h6 fw-bold mb-3 text-navy d-flex align-items-center gap-2">
         <i class="bi bi-shield-check text-primary"></i>
-        Official Pathology Instructions
+        Phlebotomy Preparation Guidance
       </h3>
 
       <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
@@ -155,17 +459,17 @@
         </div>
         <div>
           <div class="fw-bold text-navy small">Hydration Advice</div>
-          <p class="text-muted small mb-0">Drink 1-2 glasses of plain water before your blood draw to facilitate optimal vein access and reduce discomfort.</p>
+          <p class="text-muted small mb-0">Drink 1-2 glasses of plain water before your blood draw to optimize vein compliance and minimize sample collection discomfort.</p>
         </div>
       </div>
 
       <div class="d-flex align-items-start gap-3 mb-3 pb-3 border-bottom">
         <div class="rounded-circle bg-white p-2 text-danger shadow-xs">
-          <i class="bi bi-card-heading fs-5"></i>
+          <i class="bi bi-house-door fs-5"></i>
         </div>
         <div>
-          <div class="fw-bold text-navy small">Identification &amp; Order Forms</div>
-          <p class="text-muted small mb-0">Please present your government-issued ID card and physician lab requisition upon arrival at the collection suite.</p>
+          <div class="fw-bold text-navy small">Home Visit Readiness</div>
+          <p class="text-muted small mb-0">Please ensure an adult contact is available at the provided address. Keep a clean, well-lit seating area ready for the visiting phlebotomist.</p>
         </div>
       </div>
 
@@ -175,7 +479,7 @@
         </div>
         <div>
           <div class="fw-bold text-navy small">Report Delivery Timeline</div>
-          <p class="text-muted small mb-0">Standard hematology panels are available in 12-24 hours. Specialized inflammatory assays are processed within 24-48 hours.</p>
+          <p class="text-muted small mb-0">Standard hematology records are ready in 12-24h. Certified high-sensitivity CRP inflammatory panels are validated in 24-48h.</p>
         </div>
       </div>
     </div>
@@ -184,10 +488,13 @@
   <!-- 3. Existing Bookings & History Tables -->
   <div class="col-12">
     <div class="portal-card">
-      <h3 class="h6 fw-bold text-navy mb-3 d-flex align-items-center gap-2">
-        <i class="bi bi-clock-history text-primary"></i>
-        Your Scheduled Blood Collection Requisitions
-      </h3>
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h3 class="h6 fw-bold text-navy mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-clock-history text-primary"></i>
+          Your Scheduled Blood Collection Requisitions
+        </h3>
+        <span class="badge bg-light text-navy border small">Active &amp; Historical Bookings</span>
+      </div>
 
       {% if upcoming_bookings %}
         <div class="table-responsive">
@@ -196,9 +503,10 @@
               <tr class="small text-muted">
                 <th>Booking ID</th>
                 <th>Patient Name</th>
-                <th>Collection Date</th>
-                <th>Time Slot</th>
-                <th>Designated Location</th>
+                <th>Method</th>
+                <th>Collection Date &amp; Slot</th>
+                <th>Designated Location / Home Address</th>
+                <th>Contact</th>
                 <th>Status</th>
                 <th class="text-end">Actions</th>
               </tr>
@@ -207,10 +515,50 @@
               {% for b in upcoming_bookings %}
                 <tr>
                   <td><span class="fw-bold text-navy small">BLD-{{ b.id|stringformat:"04d" }}</span></td>
-                  <td><span class="fw-semibold text-navy">{{ b.patient_name }}</span></td>
-                  <td>{{ b.collection_date|date:"l, M d, Y" }}</td>
-                  <td><span class="badge bg-light text-navy border">{{ b.time_slot }}</span></td>
-                  <td class="small text-muted">{{ b.get_collection_location_display }}</td>
+                  <td>
+                    <span class="fw-semibold text-navy">{{ b.patient_name }}</span>
+                    {% if b.fasting_required %}
+                      <span class="badge bg-warning-subtle text-dark ms-1" style="font-size: 0.65rem;">Fasting</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if b.is_home_collection %}
+                      <span class="badge bg-danger-subtle text-danger border border-danger border-opacity-25 py-1 px-2">
+                        <i class="bi bi-house-heart me-1"></i>Home Visit
+                      </span>
+                    {% else %}
+                      <span class="badge bg-primary-subtle text-primary border border-primary border-opacity-25 py-1 px-2">
+                        <i class="bi bi-hospital me-1"></i>Diagnostic Center
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="small fw-semibold text-navy">{{ b.collection_date|date:"l, M d, Y" }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ b.time_slot }}</div>
+                  </td>
+                  <td>
+                    {% if b.is_home_collection %}
+                      <div class="small fw-medium text-navy">
+                        <i class="bi bi-geo-alt text-danger me-1"></i>{{ b.house_number }}, {{ b.street }}
+                      </div>
+                      <div class="text-muted" style="font-size: 0.75rem;">
+                        {{ b.area }}, {{ b.city }} - <strong class="text-dark">{{ b.pin_code }}</strong>
+                        {% if b.landmark %} • Near {{ b.landmark }}{% endif %}
+                      </div>
+                    {% else %}
+                      <div class="small text-navy fw-medium">
+                        <i class="bi bi-hospital text-primary me-1"></i>{{ b.get_collection_location_display }}
+                      </div>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if b.is_home_collection and b.contact_person %}
+                      <div class="small text-navy">{{ b.contact_person }}</div>
+                      <div class="text-muted" style="font-size: 0.75rem;">{{ b.contact_phone|default:b.contact_number }}</div>
+                    {% else %}
+                      <div class="small text-muted">{{ b.contact_number }}</div>
+                    {% endif %}
+                  </td>
                   <td>
                     <span class="badge {% if b.status == 'confirmed' %}bg-success-subtle text-success{% else %}bg-warning-subtle text-warning{% endif %}">
                       {{ b.get_status_display }}
@@ -246,13 +594,37 @@
           <h4 class="h6 fw-semibold text-muted mb-2">Past Collection Requisitions</h4>
           <div class="table-responsive">
             <table class="table table-sm align-middle text-muted small">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Patient</th>
+                  <th>Method</th>
+                  <th>Date</th>
+                  <th>Destination / Address</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
               <tbody>
                 {% for pb in past_bookings %}
                   <tr>
                     <td>BLD-{{ pb.id|stringformat:"04d" }}</td>
                     <td>{{ pb.patient_name }}</td>
+                    <td>
+                      {% if pb.is_home_collection %}
+                        <span class="badge bg-light text-danger border">Home</span>
+                      {% else %}
+                        <span class="badge bg-light text-primary border">Center</span>
+                      {% endif %}
+                    </td>
                     <td>{{ pb.collection_date|date:"M d, Y" }}</td>
-                    <td>{{ pb.get_status_display }}</td>
+                    <td>
+                      {% if pb.is_home_collection %}
+                        {{ pb.full_address }}
+                      {% else %}
+                        {{ pb.get_collection_location_display }}
+                      {% endif %}
+                    </td>
+                    <td><span class="badge bg-light text-muted border">{{ pb.get_status_display }}</span></td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -263,4 +635,187 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const methodHomeRadio = document.getElementById('method_home');
+  const methodCenterRadio = document.getElementById('method_center');
+  const homeLabel = document.getElementById('methodHomeLabel');
+  const centerLabel = document.getElementById('methodCenterLabel');
+  const homeSection = document.getElementById('homeAddressSection');
+  const centerSection = document.getElementById('centerSelectionSection');
+
+  const summaryMethodText = document.getElementById('summaryMethodText');
+  const summaryLocationText = document.getElementById('summaryLocationText');
+  const summaryDateTimeText = document.getElementById('summaryDateTimeText');
+  const summaryFastingText = document.getElementById('summaryFastingText');
+
+  const dateInput = document.getElementById('id_collection_date');
+  const timeSlotSelect = document.getElementById('id_blood_time_slot');
+  const fastingCheck = document.getElementById('id_fasting_required');
+  const centerSelect = document.getElementById('id_collection_location');
+
+  const pinCodeInput = document.getElementById('id_pin_code');
+  const pinSpinner = document.getElementById('pincodeCheckSpinner');
+  const pinFeedback = document.getElementById('pincodeCheckFeedback');
+  const areaInput = document.getElementById('id_area');
+  const cityInput = document.getElementById('id_city');
+  const stateInput = document.getElementById('id_state');
+  const houseInput = document.getElementById('id_house_number');
+
+  function updateMethodUI() {
+    const isHome = methodHomeRadio.checked;
+
+    if (isHome) {
+      homeSection.style.display = 'block';
+      centerSection.style.display = 'none';
+
+      homeLabel.classList.add('border-danger', 'shadow-xs');
+      homeLabel.style.backgroundColor = '#FFF5F5';
+      centerLabel.classList.remove('border-primary', 'shadow-xs');
+      centerLabel.style.backgroundColor = '#FFFFFF';
+
+      summaryMethodText.textContent = 'Home Blood Sample Collection';
+      updateHomeAddressSummary();
+    } else {
+      homeSection.style.display = 'none';
+      centerSection.style.display = 'block';
+
+      centerLabel.classList.add('border-primary', 'shadow-xs');
+      centerLabel.style.backgroundColor = '#F0F7FF';
+      homeLabel.classList.remove('border-danger', 'shadow-xs');
+      homeLabel.style.backgroundColor = '#FFFFFF';
+
+      summaryMethodText.textContent = 'Visit Diagnostic Center';
+      const centerName = centerSelect && centerSelect.options[centerSelect.selectedIndex]
+        ? centerSelect.options[centerSelect.selectedIndex].text
+        : 'Diagnostic Center';
+      summaryLocationText.textContent = centerName;
+    }
+  }
+
+  function updateHomeAddressSummary() {
+    if (!methodHomeRadio.checked) return;
+    const house = houseInput ? houseInput.value.trim() : '';
+    const area = areaInput ? areaInput.value.trim() : '';
+    const city = cityInput ? cityInput.value.trim() : '';
+    const pin = pinCodeInput ? pinCodeInput.value.trim() : '';
+
+    if (house || area || pin) {
+      summaryLocationText.textContent = `${house ? house + ', ' : ''}${area || ''} ${city ? '(' + city + ')' : ''} ${pin ? '- ' + pin : ''}`;
+    } else {
+      summaryLocationText.textContent = 'Address entered above';
+    }
+  }
+
+  function updateDateTimeSummary() {
+    const dVal = dateInput && dateInput.value ? dateInput.value : '';
+    const tVal = timeSlotSelect && timeSlotSelect.value ? timeSlotSelect.value : '';
+    if (dVal && tVal) {
+      summaryDateTimeText.textContent = `${dVal} • ${tVal}`;
+    } else if (dVal) {
+      summaryDateTimeText.textContent = `${dVal} • Select Slot`;
+    } else {
+      summaryDateTimeText.textContent = 'Select date & time';
+    }
+  }
+
+  function updateFastingSummary() {
+    if (fastingCheck && fastingCheck.checked) {
+      summaryFastingText.textContent = '8-10h Fasting Required';
+      summaryFastingText.className = 'fw-semibold text-danger';
+    } else {
+      summaryFastingText.textContent = 'Standard (Non-Fasting)';
+      summaryFastingText.className = 'fw-semibold text-muted';
+    }
+  }
+
+  // Event Listeners for Method Switching
+  methodHomeRadio.addEventListener('change', updateMethodUI);
+  methodCenterRadio.addEventListener('change', updateMethodUI);
+
+  // Event Listeners for Dynamic Preview
+  if (dateInput) dateInput.addEventListener('change', updateDateTimeSummary);
+  if (timeSlotSelect) timeSlotSelect.addEventListener('change', updateDateTimeSummary);
+  if (fastingCheck) fastingCheck.addEventListener('change', updateFastingSummary);
+  if (centerSelect) {
+    centerSelect.addEventListener('change', function () {
+      if (methodCenterRadio.checked) {
+        summaryLocationText.textContent = centerSelect.options[centerSelect.selectedIndex].text;
+      }
+    });
+  }
+
+  [houseInput, areaInput, cityInput, pinCodeInput].forEach(inp => {
+    if (inp) inp.addEventListener('input', updateHomeAddressSummary);
+  });
+
+  // Real-Time PIN Code Serviceability Check
+  let pinDebounceTimer = null;
+  if (pinCodeInput) {
+    pinCodeInput.addEventListener('input', function () {
+      const pin = this.value.replace(/\D/g, '').trim();
+      this.value = pin; // keep only digits
+
+      clearTimeout(pinDebounceTimer);
+      if (pin.length === 6) {
+        pinSpinner.classList.remove('d-none');
+        pinFeedback.innerHTML = '';
+
+        pinDebounceTimer = setTimeout(() => {
+          fetch(`{% url 'blood_collection:check_pincode' %}?pincode=${encodeURIComponent(pin)}`)
+            .then(res => res.json())
+            .then(data => {
+              pinSpinner.classList.add('d-none');
+              if (data.serviceable) {
+                pinFeedback.innerHTML = `<span class="text-success fw-medium"><i class="bi bi-check-circle-fill me-1"></i>${data.message}</span>`;
+                pinCodeInput.classList.remove('is-invalid');
+                pinCodeInput.classList.add('is-valid');
+                if (data.details) {
+                  if (data.details.city && cityInput && !cityInput.value) cityInput.value = data.details.city;
+                  if (data.details.state && stateInput && !stateInput.value) stateInput.value = data.details.state;
+                  if (data.details.area_name && areaInput && !areaInput.value) areaInput.value = data.details.area_name;
+                }
+              } else {
+                pinFeedback.innerHTML = `<span class="text-danger fw-medium"><i class="bi bi-exclamation-triangle-fill me-1"></i>${data.message}</span>`;
+                pinCodeInput.classList.remove('is-valid');
+                pinCodeInput.classList.add('is-invalid');
+              }
+              updateHomeAddressSummary();
+            })
+            .catch(() => {
+              pinSpinner.classList.add('d-none');
+            });
+        }, 350);
+      } else if (pin.length > 0) {
+        pinFeedback.innerHTML = `<span class="text-muted"><i class="bi bi-info-circle me-1"></i>Enter 6 digits to verify doorstep coverage.</span>`;
+        pinCodeInput.classList.remove('is-valid', 'is-invalid');
+      } else {
+        pinFeedback.innerHTML = '';
+        pinCodeInput.classList.remove('is-valid', 'is-invalid');
+      }
+    });
+  }
+
+  // Initial Run
+  updateMethodUI();
+  updateDateTimeSummary();
+  updateFastingSummary();
+});
+</script>
+<style>
+.method-card {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.method-card:hover {
+  transform: translateY(-2px);
+}
+.btn-check:checked + .method-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+</style>
 {% endblock %}

@@ -1,16 +1,16 @@
-# Sweat Sense
+# CRPify
 
 > **"Sensing Sweat. Exploring Health."**
 
-Sweat Sense is a biomedical technology project and modern patient healthcare portal exploring the detection and analysis of C-reactive protein (CRP) in human sweat using a sweat-based biosensing approach.
+CRPify is a biomedical technology project and modern patient healthcare portal exploring the detection and analysis of C-reactive protein (CRP) in human sweat using a sweat-based biosensing approach.
 
 ---
 
 ## 🔬 Scientific Context & Research Focus
 
-C-reactive protein (CRP) is a key clinical biomarker associated with systemic inflammation, cardiovascular risk, and infection monitoring. Conventional CRP testing relies primarily on invasive venipuncture. Sweat Sense explores non-invasive, sweat-based biosensing as an emerging research direction while providing patients with an integrated healthcare management platform.
+C-reactive protein (CRP) is a key clinical biomarker associated with systemic inflammation, cardiovascular risk, and infection monitoring. Conventional CRP testing relies primarily on invasive venipuncture. CRPify explores non-invasive, sweat-based biosensing as an emerging research direction while providing patients with an integrated healthcare management platform.
 
-> **Educational Notice:** *C-reactive protein (CRP) is a biomarker associated with inflammation. Sweat Sense explores sweat-based CRP detection as a research direction. Clinical diagnoses and medical decisions should always be guided by qualified healthcare professionals and accredited laboratory diagnostics.*
+> **Educational Notice:** *C-reactive protein (CRP) is a biomarker associated with inflammation. CRPify explores sweat-based CRP detection as a research direction. Clinical diagnoses and medical decisions should always be guided by qualified healthcare professionals and accredited laboratory diagnostics.*
 
 ---
 

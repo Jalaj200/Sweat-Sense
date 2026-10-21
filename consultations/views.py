@@ -48,7 +48,7 @@ def consultation_list_view(request):
     ) | all_consultations.filter(status='cancelled')
 
     context = {
-        'page_title': 'Doctor Consultation — Sweat Sense',
+        'page_title': 'Doctor Consultation — CRPify',
         'active_section': 'consultation',
         'doctors': doctors,
         'upcoming_consultations': upcoming_consultations,

@@ -1,5 +1,5 @@
 """
-Models for Medical Reports module in Sweat Sense Patient Portal.
+Models for Medical Reports module in CRPify Patient Portal.
 """
 
 from django.db import models
@@ -28,7 +28,7 @@ class MedicalReport(models.Model):
     patient = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='reports')
     title = models.CharField(max_length=200)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='biochemistry')
-    issuing_lab = models.CharField(max_length=200, default="Sweat Sense Partner Reference Laboratory")
+    issuing_lab = models.CharField(max_length=200, default="CRPify Partner Reference Laboratory")
     report_date = models.DateField()
     pdf_file = models.FileField(upload_to='secure_reports/%Y/%m/', blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ready')
